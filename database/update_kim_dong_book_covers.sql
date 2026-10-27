@@ -1,0 +1,22 @@
+USE `shop_db`;
+
+UPDATE `products` SET `image` = 'kd-book-01.png' WHERE `name` = 'Đạo làm chồng đảm - Tập 15' AND `image` = 'sample-book-01.svg';
+UPDATE `products` SET `image` = 'kd-book-02.jpg' WHERE `name` = 'Tokyo Aliens - Tập 9 (Tặng kèm Set Card)' AND `image` = 'sample-book-02.svg';
+UPDATE `products` SET `image` = 'kd-book-03.jpg' WHERE `name` = '45 chương mở đầu bộ truyện ngắn Doraemon - Tập 2' AND `image` = 'sample-book-03.svg';
+UPDATE `products` SET `image` = 'kd-book-04.jpg' WHERE `name` = 'Về chuyện tôi chuyển sinh thành Slime - Tập 3 (Tặng kèm Quà độc quyền)' AND `image` = 'sample-book-04.svg';
+UPDATE `products` SET `image` = 'kd-book-05.jpg' WHERE `name` = 'Thế giới xe cộ - Xe buýt trường - School bus' AND `image` = 'sample-book-05.svg';
+UPDATE `products` SET `image` = 'kd-book-06.jpg' WHERE `name` = 'Ở đây có niềm vui - Tiệm hoa diệu kì' AND `image` = 'sample-book-06.svg';
+UPDATE `products` SET `image` = 'kd-book-07.jpg' WHERE `name` = 'Khác biệt tuyệt vời - Cú nhỏ tìm bạn' AND `image` = 'sample-book-07.svg';
+UPDATE `products` SET `image` = 'kd-book-08.png' WHERE `name` = 'Thủ thỉ cùng con - Nơi trái tim thuộc về (2025)' AND `image` = 'sample-book-08.svg';
+UPDATE `products` SET `image` = 'kd-book-09.jpg' WHERE `name` = 'Hà Nội băm sáu phố phường' AND `image` = 'sample-book-09.svg';
+UPDATE `products` SET `image` = 'kd-book-10.jpg' WHERE `name` = 'Tôi đã trở thành nhà văn như thế nào' AND `image` = 'sample-book-10.svg';
+UPDATE `products` SET `image` = 'kd-book-11.jpg' WHERE `name` = 'Cỏ lưu lạc' AND `image` = 'sample-book-11.svg';
+UPDATE `products` SET `image` = 'kd-book-12.jpg' WHERE `name` = 'Charlie và nhà máy sôcôla' AND `image` = 'sample-book-12.svg';
+UPDATE `products` SET `image` = 'kd-book-13.jpg' WHERE `name` = 'Hai vạn dặm dưới biển' AND `image` = 'sample-book-13.svg';
+UPDATE `products` SET `image` = 'kd-book-14.jpg' WHERE `name` = 'Bà ngoại trên cây táo' AND `image` = 'sample-book-14.svg';
+UPDATE `products` SET `image` = 'kd-book-15.jpg' WHERE `name` = 'Kĩ năng vàng cho học sinh trung học - Học cách trưởng thành' AND `image` = 'sample-book-15.svg';
+UPDATE `products` SET `image` = 'kd-book-16.jpg' WHERE `name` = 'Khéo khôn với tiền - Tránh những ưu phiền - Tập 1 - Hiểu về Tiền' AND `image` = 'sample-book-16.svg';
+UPDATE `products` SET `image` = 'kd-book-17.jpg' WHERE `name` = 'Bí ẩn thế giới loài vật - Cá' AND `image` = 'sample-book-17.svg';
+UPDATE `products` SET `image` = 'kd-book-18.jpg' WHERE `name` = 'Các triều đại Việt Nam' AND `image` = 'sample-book-18.svg';
+UPDATE `products` SET `image` = 'kd-book-19.jpg' WHERE `name` = 'Lược sử nước Việt bằng tranh' AND `image` = 'sample-book-19.svg';
+UPDATE `products` SET `image` = 'kd-book-20.jpg' WHERE `name` = 'Tranh truyện lịch sử Việt Nam - Lê Quý Đôn' AND `image` = 'sample-book-20.svg';
