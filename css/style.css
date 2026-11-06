@@ -1301,6 +1301,186 @@ section {
   color: var(--red);
 }
 
+.sepay-payment-card {
+  max-width: 62rem;
+  margin: 0 auto 2rem;
+  padding: 2.5rem;
+  background: var(--white);
+  border: 1px solid rgba(153, 102, 255, 0.3);
+  border-radius: 1.2rem;
+  box-shadow: var(--box-shadow);
+}
+
+.sepay-payment-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  text-align: left;
+  padding-bottom: 1.8rem;
+  border-bottom: 1px solid rgba(51, 51, 51, 0.12);
+}
+
+.sepay-payment-icon {
+  display: grid;
+  place-items: center;
+  width: 4.8rem;
+  height: 4.8rem;
+  flex: 0 0 4.8rem;
+  color: var(--white);
+  background: var(--brown);
+  border-radius: 50%;
+  font-size: 2.2rem;
+}
+
+.sepay-payment-header h3 {
+  margin: 0 0 0.5rem;
+  color: var(--black);
+  font-size: 2.3rem;
+}
+
+.payment-status {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+
+.payment-status-pending {
+  color: #b7791f;
+}
+
+.payment-status-success {
+  color: #16803c;
+}
+
+.sepay-instruction {
+  margin: 2rem 0 1.5rem;
+  color: var(--light-color);
+  font-size: 1.7rem;
+}
+
+.sepay-qr-wrapper {
+  width: min(30rem, 100%);
+  margin: 0 auto 1.8rem;
+  padding: 1rem;
+  background: var(--white);
+  border: 1px solid rgba(51, 51, 51, 0.15);
+  border-radius: 0.8rem;
+}
+
+.sepay-qr-wrapper img {
+  display: block;
+  width: 100%;
+}
+
+.sepay-payment-details {
+  display: grid;
+  gap: 0.8rem;
+  padding: 1.5rem;
+  text-align: left;
+  background: var(--light-bg);
+  border-radius: 0.8rem;
+}
+
+.sepay-payment-details div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 1.6rem;
+}
+
+.sepay-payment-details span {
+  color: var(--light-color);
+}
+
+.sepay-payment-details strong {
+  color: var(--black);
+  text-align: right;
+}
+
+.sepay-payment-details div:first-child strong {
+  color: var(--red);
+}
+
+.sepay-note {
+  margin: 1.5rem 0;
+  color: var(--light-color);
+  font-size: 1.4rem;
+}
+
+.sepay-note i {
+  color: var(--brown);
+}
+
+.sepay-waiting {
+  color: var(--light-color);
+  font-size: 1.5rem;
+}
+
+.sepay-spinner {
+  display: inline-block;
+  width: 1.4rem;
+  height: 1.4rem;
+  margin-right: 0.5rem;
+  vertical-align: -0.2rem;
+  border: 0.2rem solid rgba(153, 102, 255, 0.25);
+  border-top-color: var(--brown);
+  border-radius: 50%;
+  animation: sepay-spin 0.8s linear infinite;
+}
+
+@keyframes sepay-spin {
+  to { transform: rotate(360deg); }
+}
+
+.sepay-success-content {
+  padding: 3rem 1rem 1rem;
+}
+
+.sepay-success-icon {
+  display: grid;
+  place-items: center;
+  width: 7rem;
+  height: 7rem;
+  margin: 0 auto 1.5rem;
+  color: var(--white);
+  background: #22a559;
+  border-radius: 50%;
+  font-size: 3.5rem;
+}
+
+.sepay-success-content h4 {
+  margin: 0 0 0.8rem;
+  color: #16803c;
+  font-size: 2.5rem;
+}
+
+.sepay-success-content p {
+  margin: 0 0 2rem;
+  color: var(--light-color);
+  font-size: 1.7rem;
+}
+
+.payment-unavailable {
+  max-width: 62rem;
+  margin: 0 auto 2rem;
+  padding: 2rem;
+  color: var(--light-color);
+  background: var(--white);
+  border-radius: 0.8rem;
+  box-shadow: var(--box-shadow);
+  font-size: 1.7rem;
+}
+
+.payment-unavailable i {
+  margin-bottom: 1rem;
+  color: #b7791f;
+  font-size: 3rem;
+}
+
+.payment-unavailable p {
+  margin: 0;
+}
+
 .checkout form {
   background-color: var(--white);
   border: var(--border);
@@ -1360,7 +1540,7 @@ section {
 
 .placed-orders .box-container .box {
   background-color: var(--white);
-  padding: 1rem 2rem;
+  padding: 0.8rem 1.6rem;
   border: var(--border);
   box-shadow: var(--box-shadow);
   flex: 1 1 40rem;
@@ -1368,9 +1548,9 @@ section {
 }
 
 .placed-orders .box-container .box p {
-  margin: 1rem 0;
-  font-size: 2rem;
-  line-height: 1.5;
+  margin: 0.7rem 0;
+  font-size: 1.7rem;
+  line-height: 1.35;
   color: var(--light-color);
 }
 
@@ -1380,14 +1560,14 @@ section {
 
 /* Bảng đơn giá từng cuốn trong một đơn hàng đã đặt */
 .placed-orders .order-items {
-  margin: 1.8rem 0 0.6rem;
-  padding-top: 1.4rem;
+  margin: 1.2rem 0 0.4rem;
+  padding-top: 1rem;
   border-top: 1px solid rgba(51, 51, 51, 0.12);
 }
 
 .placed-orders .order-items-title {
-  margin: 0 0 0.9rem;
-  font-size: 1.5rem;
+  margin: 0 0 0.6rem;
+  font-size: 1.4rem;
   font-weight: 700;
   color: var(--black);
 }
@@ -1397,8 +1577,8 @@ section {
   grid-template-columns: minmax(0, 1fr) 3.2rem 8.4rem 9.4rem;
   align-items: baseline;
   gap: 0.8rem;
-  padding: 0.7rem 0;
-  font-size: 1.4rem;
+  padding: 0.5rem 0;
+  font-size: 1.3rem;
   line-height: 1.4;
   color: var(--light-color);
 }
@@ -1443,10 +1623,10 @@ section {
   display: flex;
   justify-content: space-between;
   gap: 1rem;
-  margin-top: 0.6rem;
-  padding-top: 0.9rem;
+  margin-top: 0.4rem;
+  padding-top: 0.7rem;
   border-top: 2px solid rgba(51, 51, 51, 0.18);
-  font-size: 1.6rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: var(--black);
   font-variant-numeric: tabular-nums;
@@ -1499,6 +1679,60 @@ section {
 .footer .box-container a:hover {
   text-decoration: underline;
   color: var(--brown);
+}
+
+.placed-orders .order-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(51, 51, 51, 0.12);
+}
+
+.placed-orders .order-actions form {
+  margin: 0;
+}
+
+.placed-orders .order-actions .btn,
+.placed-orders .order-actions .delete-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: 0;
+  cursor: pointer;
+  min-height: 3.8rem;
+  padding: 0.8rem 1.4rem;
+  font-size: 1.35rem;
+  margin: 0;
+}
+
+@media (max-width: 600px) {
+  .placed-orders .box-container .box {
+    padding: 0.8rem 1.2rem;
+  }
+
+  .placed-orders .box-container .box p {
+    font-size: 1.5rem;
+  }
+
+  .placed-orders .order-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .placed-orders .order-actions form,
+  .placed-orders .order-actions .btn,
+  .placed-orders .order-actions .delete-btn {
+    width: 100%;
+  }
+
+  .placed-orders .order-actions .btn,
+  .placed-orders .order-actions .delete-btn {
+    min-height: 3.6rem;
+  }
 }
 
 .footer .credit {

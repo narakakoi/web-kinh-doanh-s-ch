@@ -9,9 +9,9 @@ if ($user_id === null) {
     exit();
 }
 
-$sepayBank = trim((string) getenv('SEPAY_BANK_CODE'));
-$sepayAccount = trim((string) getenv('SEPAY_ACCOUNT_NUMBER'));
-$sepayWebhookKey = trim((string) getenv('SEPAY_WEBHOOK_API_KEY'));
+$sepayBank = trim((string) ($localConfig['sepay_bank_code'] ?? getenv('SEPAY_BANK_CODE')));
+$sepayAccount = trim((string) ($localConfig['sepay_account_number'] ?? getenv('SEPAY_ACCOUNT_NUMBER')));
+$sepayWebhookKey = trim((string) ($localConfig['sepay_webhook_api_key'] ?? getenv('SEPAY_WEBHOOK_API_KEY')));
 $sepayConfigured = $sepayBank !== '' && $sepayAccount !== '' && $sepayWebhookKey !== '';
 $message = [];
 $checkoutOrder = null;
@@ -133,6 +133,9 @@ if ($checkoutOrder && $checkoutOrder['method'] === 'sepay_qr' && $sepayConfigure
     $qrUrl = 'https://qr.sepay.vn/img?' . $qrParameters;
 }
 
+$isQrPayment = $checkoutOrder && $checkoutOrder['method'] === 'sepay_qr' && $qrUrl !== '';
+$isPaymentCompleted = $checkoutOrder && $checkoutOrder['payment_status'] === 'completed';
+
 ?>
 
 <!DOCTYPE html>
@@ -158,19 +161,48 @@ if ($checkoutOrder && $checkoutOrder['method'] === 'sepay_qr' && $sepayConfigure
 
 <section class="display-order">
     <?php if ($checkoutOrder): ?>
-        <h3>Đơn hàng #<?php echo (int) $checkoutOrder['id']; ?></h3>
-        <p>Trạng thái thanh toán:
-            <strong id="payment-status"><?php echo htmlspecialchars($checkoutOrder['payment_status'], ENT_QUOTES, 'UTF-8'); ?></strong>
-        </p>
-        <?php if ($checkoutOrder['method'] === 'sepay_qr' && $qrUrl !== ''): ?>
-            <p>Quét mã QR và giữ nguyên nội dung chuyển khoản <strong>DH<?php echo (int) $checkoutOrder['id']; ?></strong>.</p>
-            <img src="<?php echo htmlspecialchars($qrUrl, ENT_QUOTES, 'UTF-8'); ?>" alt="Mã QR thanh toán SePay" style="display:block;max-width:320px;width:100%;margin:1rem auto;">
-            <p>Thanh toán: <strong><?php echo number_format((float) $checkoutOrder['total_price'], 0, ',', '.'); ?> VNĐ</strong></p>
-            <p id="payment-confirmation" <?php echo $checkoutOrder['payment_status'] === 'completed' ? '' : 'hidden'; ?>>Đã xác nhận thanh toán. Cảm ơn bạn đã mua hàng!</p>
+        <?php if ($isQrPayment): ?>
+            <div class="sepay-payment-card <?php echo $isPaymentCompleted ? 'is-completed' : ''; ?>" id="sepay-payment-card">
+                <div class="sepay-payment-header">
+                    <span class="sepay-payment-icon"><i class="fa-solid fa-building-columns"></i></span>
+                    <div>
+                        <h3>Thanh toán đơn hàng #<?php echo (int) $checkoutOrder['id']; ?></h3>
+                        <p id="payment-status" class="payment-status <?php echo $isPaymentCompleted ? 'payment-status-success' : 'payment-status-pending'; ?>">
+                            <?php echo $isPaymentCompleted ? 'Đã thanh toán thành công' : 'Đang chờ thanh toán'; ?>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="sepay-pending-content" <?php echo $isPaymentCompleted ? 'hidden' : ''; ?>>
+                    <p class="sepay-instruction">Mở ứng dụng ngân hàng và quét mã QR bên dưới để thanh toán.</p>
+                    <div class="sepay-qr-wrapper">
+                        <img src="<?php echo htmlspecialchars($qrUrl, ENT_QUOTES, 'UTF-8'); ?>" alt="Mã QR thanh toán SePay">
+                    </div>
+                    <div class="sepay-payment-details">
+                        <div><span>Số tiền</span><strong><?php echo number_format((float) $checkoutOrder['total_price'], 0, ',', '.'); ?> VNĐ</strong></div>
+                        <div><span>Nội dung chuyển khoản</span><strong>DH<?php echo (int) $checkoutOrder['id']; ?></strong></div>
+                    </div>
+                    <p class="sepay-note"><i class="fa-solid fa-circle-info"></i> Giữ nguyên nội dung chuyển khoản để hệ thống tự động xác nhận.</p>
+                    <div class="sepay-waiting"><span class="sepay-spinner"></span> Đang kiểm tra thanh toán...</div>
+                </div>
+
+                <div id="payment-confirmation" class="sepay-success-content" <?php echo $isPaymentCompleted ? '' : 'hidden'; ?>>
+                    <span class="sepay-success-icon"><i class="fa-solid fa-check"></i></span>
+                    <h4>Thanh toán thành công!</h4>
+                    <p>Đơn hàng của bạn đã được xác nhận. Cảm ơn bạn đã mua hàng.</p>
+                    <a href="orders.php" class="btn">Xem đơn hàng</a>
+                </div>
+            </div>
         <?php elseif ($checkoutOrder['method'] === 'sepay_qr'): ?>
-            <p>QR chưa khả dụng vì cấu hình SePay trên máy chủ chưa đầy đủ. Đơn hàng vẫn đang chờ thanh toán.</p>
+            <div class="payment-unavailable">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <p>QR chưa khả dụng vì cấu hình SePay trên máy chủ chưa đầy đủ. Đơn hàng vẫn đang chờ thanh toán.</p>
+            </div>
         <?php else: ?>
-            <p>Đơn hàng đã được tạo. Chúng tôi sẽ xử lý theo phương thức thanh toán đã chọn.</p>
+            <div class="payment-unavailable">
+                <i class="fa-solid fa-circle-check"></i>
+                <p>Đơn hàng đã được tạo. Chúng tôi sẽ xử lý theo phương thức thanh toán đã chọn.</p>
+            </div>
         <?php endif; ?>
     <?php else: ?>
     <?php
@@ -261,10 +293,12 @@ if ($checkoutOrder && $checkoutOrder['method'] === 'sepay_qr' && $sepayConfigure
 
 <?php @include '../components/footer.php'; ?>
 <script src="../js/script.js"></script>
-<?php if ($checkoutOrder && $checkoutOrder['method'] === 'sepay_qr' && $checkoutOrder['payment_status'] !== 'completed'): ?>
+<?php if ($isQrPayment && !$isPaymentCompleted): ?>
 <script>
    const paymentStatus = document.getElementById('payment-status');
    const paymentConfirmation = document.getElementById('payment-confirmation');
+   const paymentCard = document.getElementById('sepay-payment-card');
+   const pendingContent = paymentCard.querySelector('.sepay-pending-content');
    const orderId = <?php echo (int) $checkoutOrder['id']; ?>;
 
    async function refreshPaymentStatus() {
@@ -274,9 +308,15 @@ if ($checkoutOrder && $checkoutOrder['method'] === 'sepay_qr' && $sepayConfigure
          });
          if (!response.ok) return;
          const result = await response.json();
-         paymentStatus.textContent = result.payment_status;
          if (result.payment_status === 'completed') {
+            paymentStatus.textContent = 'Đã thanh toán thành công';
+            paymentStatus.classList.remove('payment-status-pending');
+            paymentStatus.classList.add('payment-status-success');
+            paymentCard.classList.add('is-completed');
+            pendingContent.hidden = true;
             paymentConfirmation.hidden = false;
+         }
+         if (result.payment_status === 'completed') {
             window.clearInterval(paymentPoll);
          }
       } catch (error) {

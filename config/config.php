@@ -1,9 +1,18 @@
 <?php
 
-$dbHost = getenv('DB_HOST');
-$dbUser = getenv('DB_USER');
-$dbPassword = getenv('DB_PASSWORD');
-$dbName = getenv('DB_NAME');
+$localConfig = [];
+$localConfigPath = __DIR__ . '/local.php';
+if (is_file($localConfigPath)) {
+    $loadedConfig = require $localConfigPath;
+    if (is_array($loadedConfig)) {
+        $localConfig = $loadedConfig;
+    }
+}
+
+$dbHost = $localConfig['db_host'] ?? getenv('DB_HOST');
+$dbUser = $localConfig['db_user'] ?? getenv('DB_USER');
+$dbPassword = $localConfig['db_password'] ?? getenv('DB_PASSWORD');
+$dbName = $localConfig['db_name'] ?? getenv('DB_NAME');
 
 $dbHost = $dbHost === false ? 'localhost' : $dbHost;
 $dbUser = $dbUser === false ? 'root' : $dbUser;

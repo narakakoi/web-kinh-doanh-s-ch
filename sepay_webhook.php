@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     respond(405, ['success' => false, 'message' => 'Method not allowed']);
 }
 
-$webhookKey = getenv('SEPAY_WEBHOOK_API_KEY');
+$webhookKey = $localConfig['sepay_webhook_api_key'] ?? getenv('SEPAY_WEBHOOK_API_KEY');
 if ($webhookKey === false || trim($webhookKey) === '') {
     error_log('SePay webhook rejected: SEPAY_WEBHOOK_API_KEY is not configured.');
     respond(503, ['success' => false, 'message' => 'Webhook is not configured']);

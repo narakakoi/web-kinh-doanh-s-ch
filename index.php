@@ -3,7 +3,7 @@
 
 session_start();
 
-$user_id = $_SESSION['user_id'] ;
+$user_id = $_SESSION['user_id'] ?? null;
 
 if (!isset($user_id)) {
     header('location:pages/login.php');
@@ -74,13 +74,13 @@ if (isset($_POST['add_to_cart'])) {
 <section class="home">
 
    <div class ="homeslide fade">
-      <img src="images/slider_2.webp" alt="lỗi">
+      <img src="images/slider_2.png" alt="lỗi">
    </div>
    <div class ="homeslide fade">
-      <img src="images/slider_3.webp" alt="lỗi">
+      <img src="images/slider_3.png" alt="lỗi">
    </div>
    <div class ="homeslide fade">
-      <img src="images/slider_4.webp" alt="lỗi">
+      <img src="images/slider_4.png" alt="lỗi">
    </div>
    <button class="prev" onclick="plusSlides(-1)">&#10094;</button>
    <button class="next" onclick="plusSlides(1)">&#10095;</button>
@@ -92,7 +92,6 @@ if (isset($_POST['add_to_cart'])) {
 </section>
 
 <script>
-   let plusIndex = 1;
    function plusSlides(n) {
     homeIndex += n;
 
