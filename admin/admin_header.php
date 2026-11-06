@@ -18,6 +18,7 @@ if (isset($message)) {
             <a href="../admin/admin_page.php">Trang Chủ</a>
             <a href="admin_products.php">Sản Phẩm</a>
             <a href="admin_orders.php">Đơn Hàng</a>
+            <a href="admin_coupons.php">Mã giảm giá</a>
             <a href="admin_users.php">Người Dùng</a>
             <a href="admin_contacts.php">Tin Nhắn</a>
         </nav>

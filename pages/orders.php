@@ -120,6 +120,9 @@ if($price_query){
                 <span>Tổng giá</span>
                 <span><?php echo number_format($fetch_orders['total_price'], 0, ',', '.'); ?> VNĐ</span>
             </div>
+            <?php if ((float) ($fetch_orders['discount_amount'] ?? 0) > 0): ?>
+                <p>Mã giảm giá <span><?php echo htmlspecialchars($fetch_orders['coupon_code'], ENT_QUOTES, 'UTF-8'); ?> - giảm <?php echo number_format((float) $fetch_orders['discount_amount'], 0, ',', '.'); ?> VNĐ</span></p>
+            <?php endif; ?>
         </div>
         <?php }else{ ?>
         <p> Sản phẩm của bạn : <span><?php echo htmlspecialchars($fetch_orders['total_products'], ENT_QUOTES, 'UTF-8'); ?></span> </p>

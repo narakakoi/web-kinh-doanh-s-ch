@@ -139,7 +139,7 @@ if (isset($_POST['add_to_cart'])) {
    <h1 class="title">Sản phẩm mới nhất</h1>
    <div class="box-container">
       <?php
-         $select_products = mysqli_query($conn, "SELECT * FROM `products` LIMIT 8") or die('Lỗi truy vấn');
+         $select_products = mysqli_query($conn, "SELECT * FROM `products` LIMIT 10") or die('Lỗi truy vấn');
          if (mysqli_num_rows($select_products) > 0) {
             while ($fetch_products = mysqli_fetch_assoc($select_products)) {
       ?>
@@ -177,7 +177,7 @@ if (isset($_POST['add_to_cart'])) {
    <div class="box-container">
       <?php
          $comic_category = mysqli_real_escape_string($conn, 'Truyện tranh');
-         $select_products = mysqli_query($conn, "SELECT * FROM `products` WHERE `category` = '$comic_category' LIMIT 8") or die('Lỗi truy vấn');
+         $select_products = mysqli_query($conn, "SELECT * FROM `products` WHERE `category` = '$comic_category' LIMIT 10") or die('Lỗi truy vấn');
          if (mysqli_num_rows($select_products) > 0) {
             while ($fetch_products = mysqli_fetch_assoc($select_products)) {
       ?>

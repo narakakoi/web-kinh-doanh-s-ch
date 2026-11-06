@@ -17,6 +17,66 @@ $message = [];
 $checkoutOrder = null;
 $_SESSION['checkout_csrf_token'] ??= bin2hex(random_bytes(32));
 
+$getCartTotal = static function (mysqli $conn, int $userId): array {
+    $total = 0.0;
+    $products = [];
+    $stmt = mysqli_prepare($conn, 'SELECT name, price, quantity FROM `cart` WHERE user_id = ?');
+    mysqli_stmt_bind_param($stmt, 'i', $userId);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    while ($item = mysqli_fetch_assoc($result)) {
+        $products[] = $item['name'] . ' (' . $item['quantity'] . ') ';
+        $total += (float) $item['price'] * (int) $item['quantity'];
+    }
+    mysqli_stmt_close($stmt);
+    return [round($total), $products];
+};
+
+$findCoupon = static function (mysqli $conn, string $code, float $cartTotal, bool $lock = false): array {
+    $sql = 'SELECT * FROM coupons WHERE code = ? AND is_active = 1
+        AND (starts_at IS NULL OR starts_at <= NOW())
+        AND (ends_at IS NULL OR ends_at >= NOW())
+        AND (usage_limit IS NULL OR used_count < usage_limit)';
+    if ($lock) {
+        $sql .= ' FOR UPDATE';
+    }
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, 's', $code);
+    mysqli_stmt_execute($stmt);
+    $coupon = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt)) ?: null;
+    mysqli_stmt_close($stmt);
+
+    if ($coupon === null) {
+        return [null, 0.0, 'Mã giảm giá không tồn tại, đã hết hạn hoặc đã hết lượt sử dụng.'];
+    }
+    if ($cartTotal < (float) $coupon['min_order_value']) {
+        return [null, 0.0, 'Đơn hàng chưa đạt giá trị tối thiểu để dùng mã này.'];
+    }
+    $discount = $coupon['discount_type'] === 'percent'
+        ? $cartTotal * (float) $coupon['discount_value'] / 100
+        : (float) $coupon['discount_value'];
+    $discount = min($cartTotal, round($discount));
+    return [$coupon, $discount, ''];
+};
+
+if (isset($_POST['apply_coupon']) && hash_equals($_SESSION['checkout_csrf_token'], (string) ($_POST['csrf_token'] ?? ''))) {
+    $couponCode = strtoupper(trim($_POST['coupon_code'] ?? ''));
+    [$cartTotal] = $getCartTotal($conn, (int) $user_id);
+    [$coupon, $discount, $couponError] = $findCoupon($conn, $couponCode, $cartTotal);
+    if ($coupon === null) {
+        unset($_SESSION['checkout_coupon']);
+        $message[] = $couponError;
+    } else {
+        $_SESSION['checkout_coupon'] = $coupon['code'];
+        $message[] = 'Đã áp dụng mã giảm giá. Bạn được giảm ' . number_format($discount, 0, ',', '.') . ' VNĐ.';
+    }
+}
+
+if (isset($_POST['remove_coupon']) && hash_equals($_SESSION['checkout_csrf_token'], (string) ($_POST['csrf_token'] ?? ''))) {
+    unset($_SESSION['checkout_coupon']);
+    $message[] = 'Đã bỏ mã giảm giá.';
+}
+
 if (isset($_POST['order'])) {
     $name = trim($_POST['name'] ?? '');
     $number = trim($_POST['number'] ?? '');
@@ -47,20 +107,7 @@ if (isset($_POST['order'])) {
         $address = 'số nhà ' . $flat . ', ' . $street . ', ' . $city . ', ' . $state . ', ' . $country . ' - ' . $pinCode;
         $placed_on = date('d-M-Y');
 
-        $cart_total = 0.0;
-        $cart_products = [];
-
-        $cart_stmt = mysqli_prepare($conn, 'SELECT name, price, quantity FROM `cart` WHERE user_id = ?');
-        mysqli_stmt_bind_param($cart_stmt, 'i', $user_id);
-        mysqli_stmt_execute($cart_stmt);
-        $cart_query = mysqli_stmt_get_result($cart_stmt);
-        while ($cart_item = mysqli_fetch_assoc($cart_query)) {
-            $cart_products[] = $cart_item['name'] . ' (' . $cart_item['quantity'] . ') ';
-            $sub_total = (float) $cart_item['price'] * (int) $cart_item['quantity'];
-            $cart_total += $sub_total;
-        }
-        mysqli_stmt_close($cart_stmt);
-        $cart_total = round($cart_total);
+        [$cart_total, $cart_products] = $getCartTotal($conn, (int) $user_id);
 
         if ($cart_total <= 0 || count($cart_products) === 0) {
             $message[] = 'Giỏ hàng đang trống hoặc tổng tiền không hợp lệ. Hãy cập nhật giá sách trước khi đặt hàng.';
@@ -69,13 +116,23 @@ if (isset($_POST['order'])) {
 
             mysqli_begin_transaction($conn);
             try {
+                $coupon = null;
+                $discount = 0.0;
+                $couponCode = $_SESSION['checkout_coupon'] ?? '';
+                if ($couponCode !== '') {
+                    [$coupon, $discount, $couponError] = $findCoupon($conn, $couponCode, $cart_total, true);
+                    if ($coupon === null) {
+                        throw new RuntimeException($couponError);
+                    }
+                }
+                $orderTotal = max(0, $cart_total - $discount);
                 $order_stmt = mysqli_prepare(
                     $conn,
-                    'INSERT INTO `orders` (user_id, name, number, email, method, address, total_products, total_price, placed_on) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
+                    'INSERT INTO `orders` (user_id, name, number, email, method, address, total_products, total_price, subtotal, discount_amount, coupon_code, placed_on) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
                 );
                 mysqli_stmt_bind_param(
                     $order_stmt,
-                    'issssssds',
+                    'issssssdddss',
                     $user_id,
                     $name,
                     $number,
@@ -83,26 +140,40 @@ if (isset($_POST['order'])) {
                     $method,
                     $address,
                     $total_products,
+                    $orderTotal,
                     $cart_total,
+                    $discount,
+                    $couponCode,
                     $placed_on
                 );
                 mysqli_stmt_execute($order_stmt);
                 $order_id = mysqli_insert_id($conn);
                 mysqli_stmt_close($order_stmt);
 
+                if ($coupon !== null) {
+                    $coupon_update = mysqli_prepare($conn, 'UPDATE coupons SET used_count = used_count + 1 WHERE id = ?');
+                    mysqli_stmt_bind_param($coupon_update, 'i', $coupon['id']);
+                    mysqli_stmt_execute($coupon_update);
+                    mysqli_stmt_close($coupon_update);
+                }
                 $delete_cart_stmt = mysqli_prepare($conn, 'DELETE FROM `cart` WHERE user_id = ?');
                 mysqli_stmt_bind_param($delete_cart_stmt, 'i', $user_id);
                 mysqli_stmt_execute($delete_cart_stmt);
                 mysqli_stmt_close($delete_cart_stmt);
 
                 mysqli_commit($conn);
+                unset($_SESSION['checkout_coupon']);
                 header('Location: checkout.php?order_id=' . $order_id);
                 exit();
-            } catch (mysqli_sql_exception $exception) {
+            } catch (Throwable $exception) {
                 mysqli_rollback($conn);
-                error_log('Order creation failed: ' . $exception->getMessage());
-                http_response_code(500);
-                $message[] = 'Không thể tạo đơn hàng lúc này. Vui lòng thử lại.';
+                if ($exception instanceof mysqli_sql_exception) {
+                    error_log('Order creation failed: ' . $exception->getMessage());
+                    http_response_code(500);
+                    $message[] = 'Không thể tạo đơn hàng lúc này. Vui lòng thử lại.';
+                } else {
+                    $message[] = $exception->getMessage();
+                }
             }
         }
     }
@@ -224,7 +295,32 @@ $isPaymentCompleted = $checkoutOrder && $checkoutOrder['payment_status'] === 'co
         }
         mysqli_stmt_close($cart_display_stmt);
     ?>
-    <div class="grand-total">Tổng cộng: <span><?php echo number_format($grand_total, 0, ',', '.'); ?> VNĐ</span></div>
+    <?php
+        $activeCoupon = null;
+        $discountAmount = 0.0;
+        if (!empty($_SESSION['checkout_coupon'])) {
+            [$activeCoupon, $discountAmount, $activeCouponError] = $findCoupon($conn, $_SESSION['checkout_coupon'], $grand_total);
+            if ($activeCoupon === null) {
+                unset($_SESSION['checkout_coupon']);
+            }
+        }
+        $checkoutTotal = max(0, $grand_total - $discountAmount);
+    ?>
+    <div class="coupon-box">
+        <form action="" method="post">
+            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['checkout_csrf_token'], ENT_QUOTES, 'UTF-8'); ?>">
+            <input type="text" name="coupon_code" value="<?php echo htmlspecialchars($_SESSION['checkout_coupon'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" placeholder="Nhập mã giảm giá">
+            <button type="submit" name="apply_coupon" class="option-btn">Áp dụng</button>
+            <?php if ($activeCoupon): ?>
+                <button type="submit" name="remove_coupon" class="delete-btn">Bỏ mã</button>
+            <?php endif; ?>
+        </form>
+        <?php if ($activeCoupon): ?>
+            <p>Mã <?php echo htmlspecialchars($activeCoupon['code'], ENT_QUOTES, 'UTF-8'); ?>: giảm <?php echo number_format($discountAmount, 0, ',', '.'); ?> VNĐ</p>
+        <?php endif; ?>
+    </div>
+    <div class="grand-total">Tạm tính: <span><?php echo number_format($grand_total, 0, ',', '.'); ?> VNĐ</span></div>
+    <div class="grand-total">Thành tiền: <span><?php echo number_format($checkoutTotal, 0, ',', '.'); ?> VNĐ</span></div>
     <?php endif; ?>
 </section>
 <?php if (!$checkoutOrder): ?>
