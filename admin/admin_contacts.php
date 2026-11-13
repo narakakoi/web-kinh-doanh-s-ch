@@ -16,7 +16,6 @@ if (isset($_GET['delete'])) {
     header('location:admin_contacts.php');
     exit();
 }
-
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -24,35 +23,51 @@ if (isset($_GET['delete'])) {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tin Nhắn</title>
-    <!-- Liên kết CDN Font Awesome -->
+    <title>Quản Lý Tin Nhắn - BookStory Admin</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="../css/admin_style.css">
+    <link rel="stylesheet" href="../css/admin_style.css?v=<?php echo time(); ?>">
 </head>
 <body>
    
 <?php @include 'admin_header.php'; ?>
 
 <section class="messages">
-    <h1 class="title">Tin Nhắn</h1>
+    <h1 class="title">Hộp Thư Phản Hồi Khách Hàng</h1>
     <div class="box-container">
         <?php
-        $select_message = mysqli_query($conn, "SELECT * FROM `message`") or die('Lỗi truy vấn');
+        $select_message = mysqli_query($conn, "SELECT * FROM `message` ORDER BY id DESC") or die('Lỗi truy vấn');
         if (mysqli_num_rows($select_message) > 0) {
             while ($fetch_message = mysqli_fetch_assoc($select_message)) {
         ?>
-        <div class="box">
-            <p>ID người dùng: <span><?php echo $fetch_message['user_id']; ?></span></p>
-            <p>Tên: <span><?php echo $fetch_message['name']; ?></span></p>
-            <p>Số điện thoại: <span><?php echo $fetch_message['number']; ?></span></p>
-            <p>Email: <span><?php echo $fetch_message['email']; ?></span></p>
-            <p>Tin nhắn: <span><?php echo $fetch_message['message']; ?></span></p>
-            <a href="admin_contacts.php?delete=<?php echo $fetch_message['id']; ?>" onclick="return confirm('Bạn có chắc chắn muốn xóa tin nhắn này?');" class="delete-btn">Xóa</a>
+        <div class="box message-card">
+            <div class="msg-header">
+                <div class="sender-info">
+                    <div class="sender-avatar"><i class="fas fa-comment-dots"></i></div>
+                    <div>
+                        <h4><?php echo htmlspecialchars($fetch_message['name']); ?></h4>
+                        <span class="sender-id">ID khách: #<?php echo htmlspecialchars($fetch_message['user_id'] ?: 'Khách vãng lai'); ?></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="msg-contact">
+                <p><i class="fas fa-phone-alt"></i> <?php echo htmlspecialchars($fetch_message['number']); ?></p>
+                <p><i class="fas fa-envelope"></i> <?php echo htmlspecialchars($fetch_message['email']); ?></p>
+            </div>
+
+            <div class="msg-content">
+                <span class="msg-label">Nội dung lời nhắn:</span>
+                <p><?php echo nl2br(htmlspecialchars($fetch_message['message'])); ?></p>
+            </div>
+
+            <a href="admin_contacts.php?delete=<?php echo $fetch_message['id']; ?>" onclick="return confirm('Bạn có chắc chắn muốn xóa tin nhắn này?');" class="delete-btn full-btn">
+                <i class="fas fa-trash-alt"></i> Xóa Tin Nhắn
+            </a>
         </div>
         <?php
             }
         } else {
-            echo '<p class="empty">Không có tin nhắn nào!</p>';
+            echo '<p class="empty"><i class="fas fa-inbox"></i> Hộp thư hiện đang trống!</p>';
         }
         ?>
     </div>

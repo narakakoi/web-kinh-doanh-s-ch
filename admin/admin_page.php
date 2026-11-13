@@ -10,7 +10,7 @@ if(!isset($admin_id)){
    exit();
 };
 
-// Tính toán an toàn các chỉ số thống kê
+// 1. Tính toán các chỉ số thống kê tổng quan
 $total_pendings = 0;
 try {
    $select_pendings = mysqli_query($conn, "SELECT * FROM `orders` WHERE payment_status = 'pending'");
@@ -66,6 +66,51 @@ try {
    $select_messages = mysqli_query($conn, "SELECT * FROM `message`");
    if ($select_messages) $number_of_messages = mysqli_num_rows($select_messages);
 } catch (Throwable $e) {}
+
+// 2. Lấy dữ liệu thật từ Database cho Biểu đồ cơ cấu thể loại sách
+$category_labels = [];
+$category_counts = [];
+try {
+   $cat_query = mysqli_query($conn, "SELECT category, COUNT(*) as total FROM `products` GROUP BY category ORDER BY total DESC");
+   if ($cat_query && mysqli_num_rows($cat_query) > 0) {
+      while ($row = mysqli_fetch_assoc($cat_query)) {
+         $category_labels[] = $row['category'] ?: 'Chưa phân loại';
+         $category_counts[] = (int)$row['total'];
+      }
+   }
+} catch (Throwable $e) {}
+
+if (empty($category_labels)) {
+   $category_labels = ['Sách tham khảo', 'Văn học', 'Kỹ năng sống'];
+   $category_counts = [10, 10, 10];
+}
+
+// 3. Lấy dữ liệu doanh thu theo ngày đặt hàng (nếu có đơn) hoặc hiển thị biểu đồ so sánh dòng tiền
+$revenue_labels = [];
+$revenue_values = [];
+$has_real_orders = false;
+try {
+   $rev_query = mysqli_query($conn, "SELECT placed_on, SUM(total_price) as daily_rev FROM `orders` GROUP BY placed_on ORDER BY id ASC LIMIT 7");
+   if ($rev_query && mysqli_num_rows($rev_query) > 0) {
+      $has_real_orders = true;
+      while ($row = mysqli_fetch_assoc($rev_query)) {
+         $revenue_labels[] = $row['placed_on'] ?: 'Hôm nay';
+         $revenue_values[] = (float)$row['daily_rev'];
+      }
+   }
+} catch (Throwable $e) {}
+
+if (!$has_real_orders) {
+   $total_inventory_value = 0;
+   try {
+      $inv_q = mysqli_query($conn, "SELECT SUM(price) as total_val FROM `products`");
+      if ($inv_q && $r = mysqli_fetch_assoc($inv_q)) {
+         $total_inventory_value = (float)($r['total_val'] ?? 0);
+      }
+   } catch (Throwable $e) {}
+   $revenue_labels = ['Doanh thu thực nhận', 'Doanh thu chờ duyệt', 'Tổng giá trị đầu sách kho'];
+   $revenue_values = [$total_completes, $total_pendings, $total_inventory_value];
+}
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -76,6 +121,63 @@ try {
    <title>Bảng Điều Khiển - Quản Trị BookStory</title>
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
    <link rel="stylesheet" href="../css/admin_style.css?v=<?php echo time(); ?>">
+   <!-- Thư viện vẽ biểu đồ chuyên nghiệp Chart.js -->
+   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+   <style>
+      .analytics-grid {
+         display: grid;
+         grid-template-columns: 1.6fr 1fr;
+         gap: 2.2rem;
+         margin-top: 2.8rem;
+      }
+      .chart-card {
+         background: var(--white);
+         border: var(--border);
+         border-radius: 1.6rem;
+         padding: 2.4rem;
+         box-shadow: var(--box-shadow);
+         display: flex;
+         flex-direction: column;
+         justify-content: space-between;
+      }
+      .chart-header {
+         display: flex;
+         align-items: center;
+         justify-content: space-between;
+         margin-bottom: 1.8rem;
+         padding-bottom: 1.2rem;
+         border-bottom: var(--border);
+      }
+      .chart-header h3 {
+         font-size: 1.8rem;
+         font-weight: 700;
+         color: var(--black);
+         display: flex;
+         align-items: center;
+         gap: 0.8rem;
+      }
+      .chart-header h3 i {
+         color: var(--brown);
+      }
+      .chart-badge {
+         font-size: 1.25rem;
+         font-weight: 700;
+         padding: 0.4rem 1rem;
+         border-radius: 2rem;
+         background: #fdf2f0;
+         color: var(--brown);
+      }
+      .chart-canvas-wrap {
+         position: relative;
+         height: 29rem;
+         width: 100%;
+      }
+      @media (max-width: 991px) {
+         .analytics-grid {
+            grid-template-columns: 1fr;
+         }
+      }
+   </style>
 </head>
 <body>
    
@@ -93,6 +195,7 @@ try {
       </div>
    </div>
 
+   <!-- 8 Thẻ chỉ số KPI -->
    <div class="box-container">
       <div class="box stat-card card-warning">
          <div class="stat-header">
@@ -166,8 +269,181 @@ try {
          <p><a href="admin_contacts.php">Tin nhắn mới <i class="fas fa-arrow-right"></i></a></p>
       </div>
    </div>
+
+   <!-- Khu vực Biểu đồ trực quan (Analytics Charts) -->
+   <div class="analytics-grid">
+      <!-- Biểu đồ 1: Sơ đồ doanh thu & dòng tiền -->
+      <div class="chart-card">
+         <div class="chart-header">
+            <h3><i class="fas fa-chart-bar"></i> <?php echo $has_real_orders ? 'Biểu Đồ Doanh Thu Theo Ngày Đặt Hàng' : 'Sơ Đồ Đối Chiếu Doanh Thu & Giá Trị Kho Sách'; ?></h3>
+            <span class="chart-badge">Đơn vị: VNĐ</span>
+         </div>
+         <div class="chart-canvas-wrap">
+            <canvas id="revenueChart"></canvas>
+         </div>
+      </div>
+
+      <!-- Biểu đồ 2: Cơ cấu đầu sách theo thể loại -->
+      <div class="chart-card">
+         <div class="chart-header">
+            <h3><i class="fas fa-chart-pie"></i> Cơ Cấu Kho Sách Theo Thể Loại</h3>
+            <span class="chart-badge"><?php echo $number_of_products; ?> đầu sách</span>
+         </div>
+         <div class="chart-canvas-wrap">
+            <canvas id="categoryChart"></canvas>
+         </div>
+      </div>
+   </div>
 </section>
 
 <script src="../js/admin_script.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+   Chart.defaults.font.family = "'Quicksand', sans-serif";
+   Chart.defaults.font.size = 13;
+   Chart.defaults.color = '#64748b';
+
+   // 1. Vẽ biểu đồ cột Doanh thu
+   const revCtx = document.getElementById('revenueChart').getContext('2d');
+   new Chart(revCtx, {
+      type: 'bar',
+      data: {
+         labels: <?php echo json_encode($revenue_labels, JSON_UNESCAPED_UNICODE); ?>,
+         datasets: [{
+            label: 'Giá trị (VNĐ)',
+            data: <?php echo json_encode($revenue_values); ?>,
+            backgroundColor: [
+               'rgba(16, 185, 129, 0.85)',
+               'rgba(245, 158, 11, 0.85)',
+               'rgba(172, 87, 67, 0.88)',
+               'rgba(59, 130, 246, 0.85)',
+               'rgba(139, 92, 246, 0.85)'
+            ],
+            borderRadius: 8,
+            barThickness: 46
+         }]
+      },
+      options: {
+         responsive: true,
+         maintainAspectRatio: false,
+         plugins: {
+            legend: { display: false },
+            tooltip: {
+               callbacks: {
+                  label: function(context) {
+                     return ' ' + Number(context.raw).toLocaleString('vi-VN') + ' VNĐ';
+                  }
+               }
+            }
+         },
+         scales: {
+            y: {
+               beginAtZero: true,
+               grid: { color: '#f1f5f9' },
+               ticks: {
+                  callback: function(value) {
+                     return Number(value).toLocaleString('vi-VN') + ' đ';
+                  }
+               }
+            },
+            x: {
+               grid: { display: false }
+            }
+         }
+      }
+   });
+
+   // 2. Vẽ biểu đồ tròn Cơ cấu thể loại sách kèm %
+   const rawLabels = <?php echo json_encode($category_labels, JSON_UNESCAPED_UNICODE); ?>;
+   const rawCounts = <?php echo json_encode($category_counts); ?>;
+   const totalBooks = rawCounts.reduce((acc, val) => acc + Number(val), 0);
+
+   // Tạo nhãn chú thích có kèm sẵn % ở bên dưới
+   const labelsWithPercent = rawLabels.map((label, idx) => {
+      const pct = totalBooks > 0 ? ((rawCounts[idx] / totalBooks) * 100).toFixed(1).replace('.', ',') : 0;
+      return `${label} (${pct}%)`;
+   });
+
+   // Plugin vẽ trực tiếp số % lên trên từng múi của biểu đồ tròn
+   const doughnutPercentPlugin = {
+      id: 'doughnutPercentPlugin',
+      afterDatasetsDraw(chart) {
+         const { ctx, data } = chart;
+         const dataset = data.datasets[0];
+         const meta = chart.getDatasetMeta(0);
+         const total = dataset.data.reduce((a, b) => a + Number(b), 0);
+
+         ctx.save();
+         meta.data.forEach((arc, index) => {
+            const val = Number(dataset.data[index]);
+            if (!val || total === 0) return;
+            const pct = (val / total) * 100;
+            if (pct < 5) return; // Ẩn nếu múi quá nhỏ để không đè chữ
+
+            const pos = arc.tooltipPosition();
+            ctx.fillStyle = '#ffffff';
+            ctx.font = "bold 13px 'Quicksand', sans-serif";
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(pct.toFixed(1).replace('.', ',') + '%', pos.x, pos.y);
+         });
+         ctx.restore();
+      }
+   };
+
+   const catCtx = document.getElementById('categoryChart').getContext('2d');
+   new Chart(catCtx, {
+      type: 'doughnut',
+      data: {
+         labels: labelsWithPercent,
+         datasets: [{
+            data: rawCounts,
+            backgroundColor: [
+               '#ac5743',
+               '#f59e0b',
+               '#10b981',
+               '#3b82f6',
+               '#8b5cf6',
+               '#06b6d4',
+               '#ec4899'
+            ],
+            borderWidth: 2,
+            borderColor: '#ffffff',
+            hoverOffset: 6
+         }]
+      },
+      options: {
+         responsive: true,
+         maintainAspectRatio: false,
+         cutout: '58%',
+         plugins: {
+            legend: {
+               position: 'bottom',
+               labels: {
+                  padding: 15,
+                  usePointStyle: true,
+                  pointStyle: 'circle',
+                  font: {
+                     size: 13,
+                     weight: '600'
+                  }
+               }
+            },
+            tooltip: {
+               callbacks: {
+                  label: function(context) {
+                     const val = Number(context.raw);
+                     const pct = totalBooks > 0 ? ((val / totalBooks) * 100).toFixed(1).replace('.', ',') : 0;
+                     const cleanName = rawLabels[context.dataIndex] || '';
+                     return ` ${cleanName}: ${val} cuốn sách (${pct}%)`;
+                  }
+               }
+            }
+         }
+      },
+      plugins: [doughnutPercentPlugin]
+   });
+});
+</script>
 </body>
 </html>
