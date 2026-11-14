@@ -14,7 +14,7 @@
 .bs-checkout .bs-form-title h3 {font-size:17px; font-weight:800;}
 .bs-checkout .bs-form-grid {display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:15px;}
 .bs-checkout .bs-form-grid label {display:flex; flex-direction:column; min-width:0; gap:7px;}
-.bs-checkout .bs-form-grid label span {font-size:12px; font-weight:800; color:#62586c;}
+.bs-checkout .bs-form-grid label span {font-size:12px; font-weight:800; color:#333D6D;}
 .bs-checkout .bs-form-grid label em {font-style:normal; color:var(--bs-danger);}
 .bs-checkout .bs-form-grid .bs-field-wide {grid-column:span 2;}
 .bs-checkout .bs-form-grid input,.bs-checkout .bs-coupon-form input {width:100%; min-height:45px; border:1px solid #e9e2ed; border-radius:10px; padding:12px 13px; background:#fcfbfe; color:#3b3447; font-size:13px;}
@@ -23,7 +23,7 @@
 /* 03. Radio COD / SePay: hiện QR option khi đã có cấu hình server */
 .bs-checkout .bs-payment-options {display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:13px;}
 .bs-checkout .bs-payment-choice {display:flex; align-items:flex-start; gap:10px; padding:15px 13px; border:1px solid #e8dfeb; border-radius:12px; cursor:pointer; background:#fff;}
-.bs-checkout .bs-payment-choice:has(input:checked) {background:#faf5ff; border-color:#b996f1; box-shadow:inset 0 0 0 1px #ebddff;}
+.bs-checkout .bs-payment-choice:has(input:checked) {background:#faf5ff; border-color:#723EC3; box-shadow:inset 0 0 0 1px #ebddff;}
 .bs-checkout .bs-payment-choice input {accent-color:var(--bs-purple); margin-top:3px;}
 .bs-checkout .bs-payment-choice strong,.bs-checkout .bs-payment-choice small {display:block;}
 .bs-checkout .bs-payment-choice strong {font-size:13px; font-weight:800;}
