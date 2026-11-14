@@ -1,0 +1,33 @@
+/* ===============================================================
+   BOOKSTORY / SHOP.CSS - V2 PASTEL
+   Chỉ đổi bảng màu và kiểu chữ; giữ nguyên kích thước, layout
+   và tên field của form lọc / lưới sách.
+   01. Banner  02. Form lọc (chỉ màu)  03. Thẻ sản phẩm (chỉ màu)
+   =============================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
+/* 01. Banner tím lavender pha hồng pastel - giữ chiều cao gốc. */
+.bs-shop-heading{background:linear-gradient(115deg,#eee8fa 0%,#f8e9f3 65%,#fff3eb 100%)}
+.bs-shop-heading h3{font-family:'Nunito','Quicksand',sans-serif;color:#725c82;font-size:clamp(28px,3.4vw,44px);font-weight:900;letter-spacing:-.025em;text-transform:none;text-shadow:none}
+.bs-shop-heading p{font-family:'Nunito','Quicksand',sans-serif;color:#95849e;font-size:18px}
+.bs-shop-heading p a{color:#a47caa}
+.bs-shop-heading p a:hover{color:#76598c}
+/* 02. Chỉ đổi màu viền/chữ/nút của form lọc; giữ nguyên flex/width/padding. */
+.bs-shop-heading + .search-form{background:#fffafd}
+.bs-shop-heading + .search-form form .box{font-family:'Nunito','Quicksand',sans-serif;color:#695b71;border-color:#d9c8df;background:#fff;box-shadow:0 4px 15px rgba(106,76,119,.06)}
+.bs-shop-heading + .search-form form .btn{font-family:'Nunito','Quicksand',sans-serif;background:#bd9acb;color:#fff;font-weight:800}
+.bs-shop-heading + .search-form form .btn:hover{background:#a680b6}
+/* 03. Giữ lưới & ảnh sách; chỉ làm mềm palette, viền, chữ và hover. */
+.bs-shop-products{background:#fffafd}
+.bs-shop-products .title{font-family:'Nunito','Quicksand',sans-serif;color:#715c80;font-size:clamp(29px,3vw,37px);font-weight:900;letter-spacing:-.02em;text-transform:none}
+.bs-shop-products .box-container .box{background:#fff;border-color:#eee1eb;border-radius:10px;box-shadow:0 4px 15px rgba(88,61,103,.035)}
+.bs-shop-products .box-container .box:hover{border-color:#d8b8d3;box-shadow:0 8px 20px rgba(159,121,176,.12)}
+.bs-shop-products .box-container .box .price{background:#c39acb;color:#fff;font-family:'Nunito','Quicksand',sans-serif}
+.bs-shop-products .box-container .box .fa-eye{color:#8f739b;border-color:#e6d8e9;background:#fff9fd}
+.bs-shop-products .box-container .box .fa-eye:hover{color:#fff;background:#aa8ab7;border-color:#aa8ab7}
+.bs-shop-products .box-container .box .name{font-family:'Nunito','Quicksand',sans-serif;color:#62546b;font-weight:800}
+.bs-shop-products .box-container .box .category{font-family:'Nunito','Quicksand',sans-serif;color:#ad8ba9;border-color:#e4cbe1}
+.bs-shop-products .box-container .box .qty{color:#6e6171;background:#fcf6fc;border-color:#e6d8e7}
+.bs-shop-products .box-container .box .box-actions .option-btn{font-family:'Nunito','Quicksand',sans-serif;color:#9675a0;border-color:#e3d4e7;background:#fff7fd}
+.bs-shop-products .box-container .box .box-actions .option-btn:hover{color:#fff;background:#bc97c5;border-color:#bc97c5}
+.bs-shop-products .box-container .box .box-actions .btn{font-family:'Nunito','Quicksand',sans-serif;background:#d9a5bb;color:#fff;font-weight:800}
+.bs-shop-products .box-container .box .box-actions .btn:hover{background:#c58da7}

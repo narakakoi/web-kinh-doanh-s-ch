@@ -1,0 +1,167 @@
+/* ================================================================
+   BOOKSTORY / HOME.CSS - PASTEL V3
+   01. Voucher thu gọn theo KHUNG, không thu nhỏ chữ
+   02. Thẻ mã giảm giá + nút sao chép
+   03. Lời mời liên hệ cuối trang - nhẹ nhàng, không icon
+   04. Responsive
+   Chỉ nạp ở index.php; không thay đổi css/style.css của nhóm.
+   ================================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap');
+
+/* 01. Khung voucher: thu chiều rộng toàn khu và bỏ nền cam toàn màn hình.
+   Kích thước chữ được GIỮ/LÀM DỄ ĐỌC, chỉ giảm diện tích khối. */
+.bs-home-offers {
+  padding: 16px 20px 18px;
+  background: #fbf9fa;
+  font-family: 'Be Vietnam Pro', 'Quicksand', sans-serif;
+}
+.bs-home-offers .bs-offers-inner {
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 18px 22px 18px;
+  background: linear-gradient(113deg, #fff0eb 0%, #fff5ef 54%, #faf0fa 100%);
+  border: 1px solid #f1dcdf;
+  border-radius: 21px;
+  box-shadow: 0 8px 22px rgba(110, 71, 90, .035);
+}
+.bs-home-offers .bs-offers-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 22px;
+  margin-bottom: 12px;
+  color: #5c4554;
+}
+.bs-home-offers .bs-offers-heading h2 {
+  color: #59435a;
+  font-size: clamp(23px, 2.35vw, 28px);
+  font-family: inherit;
+  font-weight: 800;
+  line-height: 1.3;
+  margin: 5px 0 2px;
+  text-transform: none;
+  letter-spacing: -.025em;
+}
+.bs-home-offers .bs-offers-heading p {font-size: 13px; line-height: 1.65; color: #857581;}
+.bs-home-offers .bs-offers-tag {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: #fff; border: 1px solid #f2d4cf; border-radius: 20px;
+  padding: 4px 10px; font-size: 11px; font-weight: 800; letter-spacing: .035em;
+  color: #cb6a66;
+}
+.bs-home-offers .bs-offers-shop-link {
+  display: inline-flex; align-items: center; gap: 7px; white-space: nowrap;
+  color: #a65f79; font-weight: 800; font-size: 13px;
+  padding: 5px 0; border-bottom: 1px solid #dca8b5;
+}
+.bs-home-offers .bs-offers-shop-link:hover {color: #794e7d;}
+
+/* 02. Voucher: card nhỏ gọn hơn theo chiều ngang, chữ giá vẫn nổi bật. */
+.bs-home-offers .bs-offers-grid {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 11px;
+}
+.bs-home-offers .bs-offer-card {
+  min-width: 0; min-height: 148px; display: flex; flex-direction: column;
+  position: relative; background: #fff; border: 1px solid #f3e2e5;
+  border-radius: 13px; padding: 11px 13px;
+  box-shadow: 0 5px 15px rgba(120, 76, 83, .04);
+}
+.bs-home-offers .bs-offer-card::before {display: none;}
+.bs-home-offers .bs-offer-card-top {display: flex; align-items: center; justify-content: space-between; gap: 8px;}
+.bs-home-offers .bs-offer-icon {
+  display: grid; place-items: center; width: 27px; height: 27px;
+  background: #fff0e9; color: #d56e69; border-radius: 8px; font-size: 15px;
+}
+.bs-home-offers .bs-offer-type {font-size: 11px; font-weight: 800; color: #b38e94; letter-spacing: .03em;}
+.bs-home-offers .bs-offer-value {font-size: 14px; font-weight: 700; color: #544955; margin: 5px 0 2px;}
+.bs-home-offers .bs-offer-value strong {font-size: 25px; font-weight: 800; color: #d75c5c; letter-spacing: -.03em;}
+.bs-home-offers .bs-offer-minimum {font-size: 12px; color: #716674; line-height: 1.5; margin: 0 0 2px;}
+.bs-home-offers .bs-offer-expiry {font-size: 11.5px; color: #9a8d98; margin: 0 0 5px;}
+.bs-home-offers .bs-offer-expiry i {margin-right: 4px; color: #bf8992;}
+.bs-home-offers .bs-offer-code-row {
+  display: flex; align-items: center; gap: 6px; margin-top: auto;
+  padding: 3px; background: #fff7f5; border: 1px dashed #ecc8c8; border-radius: 8px;
+}
+.bs-home-offers .bs-offer-code-row code {
+  flex: 1; min-width: 0; overflow-wrap: anywhere;
+  font-family: inherit; font-size: 12px; font-weight: 800; color: #aa5867; text-align: center;
+}
+.bs-home-offers .bs-offer-code-row button {
+  border: 0; cursor: pointer; background: #cd7f8b; color: #fff;
+  border-radius: 6px; min-height: 29px; padding: 5px 8px;
+  font: 700 11.5px 'Be Vietnam Pro', sans-serif; white-space: nowrap;
+}
+.bs-home-offers .bs-offer-code-row button:hover,
+.bs-home-offers .bs-offer-code-row button.bs-copied {background: #a65f79;}
+.bs-home-offers .bs-offers-empty {
+  background: #fff; border: 1px solid #f0dfe5; border-radius: 13px;
+  padding: 23px 27px; display: flex; align-items: center; gap: 18px; color: #59475b;
+}
+.bs-home-offers .bs-offers-empty>i {font-size: 27px; color: #bd819c;}
+.bs-home-offers .bs-offers-empty div {flex: 1;}
+.bs-home-offers .bs-offers-empty strong,
+.bs-home-offers .bs-offers-empty span {display:block;}
+.bs-home-offers .bs-offers-empty strong {font-size: 16px; margin-bottom: 5px;}
+.bs-home-offers .bs-offers-empty span {font-size: 13px; color: #867784;}
+.bs-home-offers .bs-offers-empty a {
+  padding: 10px 13px; border-radius: 8px; background: #bc849d;
+  color: #fff; font-size: 13px; font-weight: 700;
+}
+
+/* 03. Khối Liên hệ ở trang chủ: bỏ nền tím đậm toàn màn hình.
+   Nền hồng/lavender nhẹ, hai cột gọn, không icon trang trí. */
+.home-contact {
+  padding: 34px 22px 56px;
+  text-align: left;
+  background: #fcfafc;
+}
+.home-contact .content {
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 32px 38px;
+  display: grid; grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center; gap: 24px;
+  background: linear-gradient(112deg, #f4ecf9 0%, #fff4f6 100%);
+  border: 1px solid #e9dce9; border-radius: 20px;
+  box-shadow: 0 8px 28px rgba(99, 70, 108, .045);
+}
+.home-contact .bs-home-contact-copy {min-width:0;}
+.home-contact .content h3 {
+  font-family: 'Be Vietnam Pro','Quicksand',sans-serif;
+  font-size: clamp(21px, 2vw, 26px); font-weight: 800; line-height: 1.4;
+  color: #644e6e; text-transform: none; margin: 0 0 5px;
+}
+.home-contact .content p {
+  max-width: 595px; font-family: 'Be Vietnam Pro','Quicksand',sans-serif;
+  font-size: 13px; font-weight: 400; line-height: 1.75; color: #7b6d7e;
+}
+.home-contact .content .btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 46px; margin: 0; padding: 11px 22px;
+  border-radius: 11px; background: #b18bb8; color: #fff;
+  font-family: 'Be Vietnam Pro','Quicksand',sans-serif;
+  font-size: 13px; font-weight: 700; text-transform: none; white-space: nowrap;
+  box-shadow: 0 5px 12px rgba(144, 97, 161, .09);
+}
+.home-contact .content .btn:hover {background: #936fa0; color: #fff;}
+
+/* 04. Responsive: thẻ không bị nhỏ chữ hoặc tràn ở màn hình hẹp. */
+@media (max-width: 1050px) {
+  .bs-home-offers .bs-offers-grid {grid-template-columns:repeat(2,minmax(0,1fr));}
+}
+@media (max-width: 680px) {
+  .bs-home-offers {padding: 20px 14px 23px;}
+  .bs-home-offers .bs-offers-inner {padding:20px 16px;}
+  .bs-home-offers .bs-offers-heading {align-items:flex-start;flex-direction:column;gap:10px;}
+  .bs-home-offers .bs-offers-shop-link {font-size:13px;}
+  .home-contact {padding:22px 14px 36px;}
+  .home-contact .content {grid-template-columns:1fr; padding:25px 20px; gap:18px;}
+  .home-contact .content .btn {justify-self:start;}
+}
+@media (max-width: 480px) {
+  .bs-home-offers .bs-offers-grid {grid-template-columns:1fr;}
+  .bs-home-offers .bs-offer-card {min-height:0;}
+  .bs-home-offers .bs-offers-heading h2 {font-size:23px;}
+  .bs-home-offers .bs-offers-empty {flex-direction:column;text-align:center;}
+  .bs-home-offers .bs-offers-empty a {width:100%;text-align:center;}
+}
