@@ -11,8 +11,7 @@
   min-height: 58vh;
   font-size: 14px
 }
-/* Kế thừa font chữ ở độ ưu tiên thấp để giữ font riêng của các icon. */
-:where(.bs-view-page *) {
+.bs-view-page * {
   font-family: inherit
 }
 .bs-view-page .bs-view-wrap {
@@ -191,6 +190,18 @@
 .bs-view-page .bs-view-like:hover {
   background: #f7f1ff;
   border-color: #b9a3d5
+}
+.bs-view-page .bs-view-advantages {
+  margin-top: 25px;
+  display: grid;
+  gap: 11px;
+  color: #897e96;
+  font-size: 12px
+}
+.bs-view-page .bs-view-advantages i {
+  color: #8b65cc;
+  font-size: 14px;
+  width: 25px
 }
 /* 04. Mô tả sách riêng, dễ đọc */
 .bs-view-page .bs-view-description {
