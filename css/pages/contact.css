@@ -46,3 +46,25 @@
 /* 04. Điện thoại: form xuống dưới nội dung, không tràn cột. */
 @media(max-width:830px){.bs-contact-page .bs-contact-layout{grid-template-columns:1fr;gap:20px}.bs-contact-page .bs-contact-body{padding:22px 18px 48px}.bs-contact-page .bs-contact-hero{padding:28px 18px 35px}.bs-contact-page .bs-contact-aside{padding:8px 0}.bs-contact-page .bs-contact-note{margin-top:20px}}
 @media(max-width:520px){.bs-contact-page .bs-contact-form-card{padding:24px 18px}.bs-contact-page .bs-contact-row{grid-template-columns:1fr}.bs-contact-page .bs-contact-hero h1{font-size:29px}}
+
+/* 05. Tăng cỡ chữ: trước đây nhiều chỗ chỉ 10–13px, khó đọc.
+   Giữ nguyên form, name của input, xử lý POST và bố cục hai cột. */
+.bs-contact-page {font-size: 16px;}
+.bs-contact-page .bs-contact-crumb {font-size: 14px;}
+.bs-contact-page .bs-contact-eyebrow {font-size: 12px;}
+.bs-contact-page .bs-contact-hero p {font-size: 17px;line-height:1.8;}
+.bs-contact-page .bs-contact-kicker {font-size: 14px;}
+.bs-contact-page .bs-contact-aside > p {font-size: 16px;}
+.bs-contact-page .bs-contact-note strong {font-size: 16px;}
+.bs-contact-page .bs-contact-note p {font-size: 15px;}
+.bs-contact-page .bs-contact-form-heading h2 {font-size: 27px;}
+.bs-contact-page .bs-contact-form-heading p {font-size: 16px;}
+.bs-contact-page .bs-contact-field label {font-size: 15px;margin-bottom:9px;}
+.bs-contact-page .bs-contact-field input,
+.bs-contact-page .bs-contact-field textarea {font-size: 16px;padding: 14px 16px;line-height:1.6;}
+.bs-contact-page .bs-contact-field input::placeholder,
+.bs-contact-page .bs-contact-field textarea::placeholder {color:#918395;}
+.bs-contact-page .bs-contact-submit {font-size: 17px;min-height: 50px;}
+.bs-contact-page .bs-contact-privacy {font-size: 13px;line-height:1.6;}
+.bs-contact-page .bs-contact-notice {font-size: 15px;}
+@media(max-width:520px){.bs-contact-page .bs-contact-form-heading h2{font-size:25px;}}

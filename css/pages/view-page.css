@@ -42,7 +42,6 @@
 /* 04. Mô tả sách riêng, dễ đọc */
 .bs-view-page .bs-view-description{padding:32px 38px;margin:22px 0 0;background:#fff;border:1px solid #ece5f2;border-radius:20px}
 .bs-view-page .bs-view-description-header{display:flex;gap:12px;align-items:center;margin-bottom:18px}
-.bs-view-page .bs-view-description-header>i{display:grid;place-items:center;background:#f0e9fc;color:#7e55c5;border-radius:10px;width:39px;height:39px;font-size:16px}
 .bs-view-page .bs-view-description h2{font-size:20px;font-weight:800;color:#3c304c;margin:0}
 .bs-view-page .bs-view-description p{font-size:14px;color:#70677a;line-height:1.95;white-space:normal}
 .bs-view-page .bs-view-missing{text-align:center;background:white;padding:70px 20px;border:1px solid #eee4f3;border-radius:20px}
@@ -53,3 +52,6 @@
 /* 05. Responsive */
 @media(max-width:850px){.bs-view-page .bs-view-product{grid-template-columns:1fr;padding:24px}.bs-view-page .bs-view-image-frame{min-height:350px}.bs-view-page .bs-view-image-frame img{max-height:350px}}
 @media(max-width:520px){.bs-view-page .bs-view-wrap{padding:20px 13px 45px}.bs-view-page .bs-view-product{padding:16px;border-radius:16px;gap:18px}.bs-view-page .bs-view-image-frame{min-height:290px;padding:16px}.bs-view-page .bs-view-image-frame img{max-height:300px}.bs-view-page .bs-view-purchase{grid-template-columns:76px minmax(0,1fr)}.bs-view-page .bs-view-description{padding:24px 19px}.bs-view-page .bs-view-information h1{font-size:26px}}
+
+/* Mô tả chỉ dùng tiêu đề chữ, bỏ icon ô vuông khi thiếu Font Awesome. */
+.bs-view-page .bs-view-description-header{gap:0;}
