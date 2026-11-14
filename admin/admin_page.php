@@ -123,61 +123,6 @@ if (!$has_real_orders) {
    <link rel="stylesheet" href="../css/admin_style.css?v=<?php echo time(); ?>">
    <!-- Thư viện vẽ biểu đồ chuyên nghiệp Chart.js -->
    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-   <style>
-      .analytics-grid {
-         display: grid;
-         grid-template-columns: 1.6fr 1fr;
-         gap: 2.2rem;
-         margin-top: 2.8rem;
-      }
-      .chart-card {
-         background: var(--white);
-         border: var(--border);
-         border-radius: 1.6rem;
-         padding: 2.4rem;
-         box-shadow: var(--box-shadow);
-         display: flex;
-         flex-direction: column;
-         justify-content: space-between;
-      }
-      .chart-header {
-         display: flex;
-         align-items: center;
-         justify-content: space-between;
-         margin-bottom: 1.8rem;
-         padding-bottom: 1.2rem;
-         border-bottom: var(--border);
-      }
-      .chart-header h3 {
-         font-size: 1.8rem;
-         font-weight: 700;
-         color: var(--black);
-         display: flex;
-         align-items: center;
-         gap: 0.8rem;
-      }
-      .chart-header h3 i {
-         color: var(--brown);
-      }
-      .chart-badge {
-         font-size: 1.25rem;
-         font-weight: 700;
-         padding: 0.4rem 1rem;
-         border-radius: 2rem;
-         background: #fdf2f0;
-         color: var(--brown);
-      }
-      .chart-canvas-wrap {
-         position: relative;
-         height: 29rem;
-         width: 100%;
-      }
-      @media (max-width: 991px) {
-         .analytics-grid {
-            grid-template-columns: 1fr;
-         }
-      }
-   </style>
 </head>
 <body>
    
