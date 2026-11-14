@@ -1,0 +1,48 @@
+/* pages/login.php và pages/register.php: biểu mẫu tài khoản. */
+/* Login - Logout */
+
+.form-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.form-container form {
+  padding: 2%;
+  border-radius: 2%;
+  background-color: var(--white);
+  box-shadow: var(--box-shadow);
+  width: 50rem;
+  text-align: center;
+}
+
+.form-container form h3 {
+  font-size: 25px;
+  text-transform: uppercase;
+  color: var(--black);
+  margin-bottom: 2%;
+}
+
+.form-container form .box {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 18px;
+  color: var(--black);
+  background-color: gainsboro;
+  margin: 10px 0;
+  border-radius: 10px;
+}
+
+.form-container form p {
+  margin-top: 15px;
+  font-size: 20px;
+  color: var(--light-color);
+}
+
+.form-container form p a {
+  color: var(--brown);
+}
+
+.form-container form p a:hover {
+  color: blue;
+}

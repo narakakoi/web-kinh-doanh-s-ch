@@ -31,6 +31,10 @@ $message = array_merge($message ?? [], handle_product_action($conn, (int) $user_
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
    <!-- liên kết file css tùy chỉnh -->
    <link rel="stylesheet" href="../css/style.css">
+   <link rel="stylesheet" href="../css/components/header.css">
+   <link rel="stylesheet" href="../css/components/footer.css">
+   <link rel="stylesheet" href="../css/components/product-card.css">
+   <link rel="stylesheet" href="../css/components/search-form.css">
 
 </head>
 <body>

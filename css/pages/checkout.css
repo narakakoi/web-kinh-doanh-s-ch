@@ -1,7 +1,7 @@
 /* ====================================================================
    BOOKSTORY · THANH TOÁN — chỉ nạp từ pages/checkout.php
    00. Shared storefront shell · 01. Hai cột · 02. Form · 03. Payment · 04. Summary · 05. Responsive
-   SePay logic vẫn trong checkout.php; style cũ của QR ở ../style.css.
+   SePay logic vẫn trong checkout.php; style của QR ở ../components/sepay.css.
    ==================================================================== */
 /* 00. Shared storefront shell: dùng riêng cho trang mua sắm */
 .bs-commerce {

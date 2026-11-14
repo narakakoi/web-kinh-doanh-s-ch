@@ -1,0 +1,39 @@
+/* components/footer.php: các cột và liên kết chân trang. */
+/* Chân trang */
+
+.footer {
+  background-color: var(--white);
+}
+
+.footer .box-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(27rem, 1fr));
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.footer .box-container .box h3 {
+  font-size: 2.2rem;
+  color: var(--black);
+  margin-bottom: 1.5rem;
+  text-transform: uppercase;
+}
+
+.footer .box-container a {
+  font-size: 1.7rem;
+  color: var(--light-color);
+  padding: 1rem 0;
+  display: block;
+}
+
+.footer .box-container a i {
+  color: var(--brown);
+  padding-right: 1rem;
+}
+
+.footer .box-container a:hover {
+  text-decoration: underline;
+  color: var(--brown);
+}

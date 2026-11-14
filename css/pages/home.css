@@ -4,9 +4,138 @@
    02. Thẻ mã giảm giá + nút sao chép
    03. Lời mời liên hệ cuối trang - nhẹ nhàng, không icon
    04. Responsive
-   Chỉ nạp ở index.php; không thay đổi css/style.css của nhóm.
+   Chỉ nạp ở index.php: banner, voucher, liên hệ nhanh và palette.
    ================================================================ */
 @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Nunito:wght@400;500;600;700;800;900&display=swap');
+
+/* Bố cục gốc chuyển từ css/style.css; giữ thứ tự trước palette. */
+.home {
+  min-height: 60vh;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.homeslide {
+    min-height: 60vh;
+    display: none;
+}
+
+.homeslide img {
+    width: 100%;
+    height: 60vh;
+    object-fit: cover;
+    display: block;
+    border-radius: 10px;
+}
+
+.home .content {
+  text-align: center;
+}
+
+/* Liên hệ ở trang chủ - index */
+
+.home-contact {
+  background-color: var(--black);
+  text-align: center;
+}
+
+.home-contact .content {
+  max-width: 50rem;
+  margin: 0 auto;
+}
+
+.home-contact .content h3 {
+  text-transform: uppercase;
+  color: var(--white);
+  font-size: 3rem;
+}
+
+.home-contact .content p {
+  line-height: 2;
+  font-size: 1.5rem;
+  color: var(--light-white);
+  padding: 1rem 0;
+}
+
+.home-contact .content .btn:hover {
+  background-color: var(--white);
+  color: var(--black);
+}
+
+.mySlides {
+  width: 100%;
+  display: none;
+}
+
+.mySlides img {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+
+/* Slideshow container */
+.slideshow-container {
+  width: 85%;
+  position: relative;
+  margin: 0 auto;
+}
+
+/* Next & previous buttons */
+.prev,
+.next {
+   cursor: pointer;
+   position: absolute;
+   top: 50%;
+   width: auto;
+   padding: 16px;
+   margin-top: -22px;
+   color: white;
+   font-weight: bold;
+   font-size: 18px;
+   transition: 0.6s ease;
+   border-radius: 0 3px 3px 0;
+   user-select: none;
+}
+
+/* Position the "next button" to the right */
+ .next {
+   right: 0;
+   border-radius: 3px 0 0 3px;
+}
+ .prev {
+   left: 0;
+   border-radius: 0px 3px 3px 0px;
+}
+/* On hover, add a black background color with a little bit see-through */
+.prev:hover,
+.next:hover {
+   background-color: var(--brown);
+}
+
+.fade {
+   animation-name: fade;
+   animation-duration: 1.5s;
+}
+
+@keyframes fade {
+   from {
+      opacity: 0.4
+   }
+
+   to {
+      opacity: 1
+   }
+}
+
+@media only screen and (max-width: 300px) {
+  .prev,
+  .next {
+    font-size: 11px;
+  }
+}
+
 /* 01. Khung voucher: thu chiều rộng toàn khu và bỏ nền cam toàn màn hình.
    Kích thước chữ được GIỮ/LÀM DỄ ĐỌC, chỉ giảm diện tích khối. */
 .bs-home-offers {
