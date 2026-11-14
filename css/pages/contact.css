@@ -5,66 +5,301 @@
    Chỉ áp dụng trong .bs-contact-page; không sửa style.css chung.
    =============================================================== */
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap');
-.bs-contact-page{--bs-ink:#55465c;--bs-muted:#827788;--bs-lilac:#a48db4;--bs-rose:#c5899b;background:#fffafc;color:var(--bs-ink);font-family:'Nunito','Quicksand',sans-serif;font-size:14px;line-height:1.65;min-height:60vh}
-.bs-contact-page *{font-family:inherit}
-.bs-contact-page .bs-contact-wrap{max-width:1100px;margin:0 auto}
+.bs-contact-page {
+  --bs-ink: #55465c;
+  --bs-muted: #827788;
+  --bs-lilac: #a48db4;
+  --bs-rose: #c5899b;
+  background: #fffafc;
+  color: var(--bs-ink);
+  font-family: 'Nunito','Quicksand',sans-serif;
+  font-size: 14px;
+  line-height: 1.65;
+  min-height: 60vh
+}
+.bs-contact-page * {
+  font-family: inherit
+}
+.bs-contact-page .bs-contact-wrap {
+  max-width: 1100px;
+  margin: 0 auto
+}
 /* 01. Dòng giới thiệu gọn, không icon trang trí. */
-.bs-contact-page .bs-contact-hero{padding:35px 24px 58px;background:linear-gradient(115deg,#f5effb,#fff3f5 62%,#fff9f4)}
-.bs-contact-page .bs-contact-crumb{display:flex;gap:10px;align-items:center;font-size:12px;color:#948b99;margin-bottom:26px}
-.bs-contact-page .bs-contact-crumb a{color:#866c9c}
-.bs-contact-page .bs-contact-eyebrow{font-size:10px;letter-spacing:.16em;font-weight:800;color:#94759e}
-.bs-contact-page .bs-contact-hero h1{font-size:clamp(29px,3.7vw,43px);font-weight:800;line-height:1.24;letter-spacing:-.035em;max-width:760px;color:#4e4059;margin:10px 0 13px;text-transform:none}
-.bs-contact-page .bs-contact-hero h1 em{font-style:normal;color:#ad819f}
-.bs-contact-page .bs-contact-hero p{max-width:640px;font-size:14px;color:#807587;line-height:1.75}
+.bs-contact-page .bs-contact-hero {
+  padding: 35px 24px 58px;
+  background: linear-gradient(115deg,#f5effb,#fff3f5 62%,#fff9f4)
+}
+.bs-contact-page .bs-contact-crumb {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  font-size: 12px;
+  color: #948b99;
+  margin-bottom: 26px
+}
+.bs-contact-page .bs-contact-crumb a {
+  color: #866c9c
+}
+.bs-contact-page .bs-contact-eyebrow {
+  font-size: 10px;
+  letter-spacing: .16em;
+  font-weight: 800;
+  color: #94759e
+}
+.bs-contact-page .bs-contact-hero h1 {
+  font-size: clamp(29px,3.7vw,43px);
+  font-weight: 800;
+  line-height: 1.24;
+  letter-spacing: -.035em;
+  max-width: 760px;
+  color: #4e4059;
+  margin: 10px 0 13px;
+  text-transform: none
+}
+.bs-contact-page .bs-contact-hero h1 em {
+  font-style: normal;
+  color: #ad819f
+}
+.bs-contact-page .bs-contact-hero p {
+  max-width: 640px;
+  font-size: 14px;
+  color: #807587;
+  line-height: 1.75
+}
 /* 02. Cột thông tin tối giản: không icon, không các ô chức năng lặp. */
-.bs-contact-page .bs-contact-body{padding:40px 24px 78px}
-.bs-contact-page .bs-contact-layout{display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);gap:55px;align-items:start}
-.bs-contact-page .bs-contact-aside{padding:34px 0 0}
-.bs-contact-page .bs-contact-kicker{display:block;color:#ad809b;font-size:11px;font-weight:800;letter-spacing:.04em;margin-bottom:13px}
-.bs-contact-page .bs-contact-aside h2{font-size:clamp(25px,2.6vw,32px);line-height:1.35;font-weight:800;color:#55445e;letter-spacing:-.025em;margin:0 0 18px}
-.bs-contact-page .bs-contact-aside>p{font-size:14px;color:#817584;line-height:1.9;max-width:400px}
-.bs-contact-page .bs-contact-note{margin-top:40px;padding:17px 0 17px 18px;border-left:3px solid #d2bedb;background:transparent}
-.bs-contact-page .bs-contact-note strong{font-size:13px;font-weight:800;color:#6d5b78}
-.bs-contact-page .bs-contact-note p{font-size:13px;line-height:1.8;color:#918592;margin-top:7px;max-width:360px}
+.bs-contact-page .bs-contact-body {
+  padding: 40px 24px 78px
+}
+.bs-contact-page .bs-contact-layout {
+  display: grid;
+  grid-template-columns: minmax(0,.92fr) minmax(0,1.08fr);
+  gap: 55px;
+  align-items: start
+}
+.bs-contact-page .bs-contact-aside {
+  padding: 34px 0 0
+}
+.bs-contact-page .bs-contact-kicker {
+  display: block;
+  color: #ad809b;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .04em;
+  margin-bottom: 13px
+}
+.bs-contact-page .bs-contact-aside h2 {
+  font-size: clamp(25px,2.6vw,32px);
+  line-height: 1.35;
+  font-weight: 800;
+  color: #55445e;
+  letter-spacing: -.025em;
+  margin: 0 0 18px
+}
+.bs-contact-page .bs-contact-aside>p {
+  font-size: 14px;
+  color: #817584;
+  line-height: 1.9;
+  max-width: 400px
+}
+.bs-contact-page .bs-contact-note {
+  margin-top: 40px;
+  padding: 17px 0 17px 18px;
+  border-left: 3px solid #d2bedb;
+  background: transparent
+}
+.bs-contact-page .bs-contact-note strong {
+  font-size: 13px;
+  font-weight: 800;
+  color: #6d5b78
+}
+.bs-contact-page .bs-contact-note p {
+  font-size: 13px;
+  line-height: 1.8;
+  color: #918592;
+  margin-top: 7px;
+  max-width: 360px
+}
 /* 03. Form dịu mắt, giữ nguyên tên field để PHP lưu tin nhắn. */
-.bs-contact-page .bs-contact-form-card{padding:32px 35px 29px;background:#fff;border:1px solid #efe6ed;border-radius:16px;box-shadow:0 13px 35px rgba(84,60,85,.06)}
-.bs-contact-page .bs-contact-form-heading{margin-bottom:24px}
-.bs-contact-page .bs-contact-form-heading h2{font-size:23px;font-weight:800;color:#55425e;margin:0 0 5px}
-.bs-contact-page .bs-contact-form-heading p{font-size:13px;color:#9b8f9c}
-.bs-contact-page .bs-contact-form{display:grid;gap:17px}
-.bs-contact-page .bs-contact-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.bs-contact-page .bs-contact-field label{display:block;font-size:12px;font-weight:800;color:#665669;margin-bottom:7px}
-.bs-contact-page .bs-contact-field label span{color:#c989a0}
-.bs-contact-page .bs-contact-field input,.bs-contact-page .bs-contact-field textarea{width:100%;border:1px solid #ebdfeb;background:#fffbfd;color:#5b4b61;font-size:13px;line-height:1.6;border-radius:9px;padding:12px 14px;outline:0;box-shadow:none}
-.bs-contact-page .bs-contact-field input::placeholder,.bs-contact-page .bs-contact-field textarea::placeholder{color:#b3a7b3}
-.bs-contact-page .bs-contact-field input:focus,.bs-contact-page .bs-contact-field textarea:focus{background:#fff;border-color:#c3aacd;box-shadow:0 0 0 3px #ede4f0}
-.bs-contact-page .bs-contact-field textarea{min-height:140px;resize:vertical}
-.bs-contact-page .bs-contact-submit{border:0;border-radius:9px;background:#b792bb;color:#fff;font-size:14px;font-weight:800;min-height:46px;cursor:pointer;transition:background .2s}
-.bs-contact-page .bs-contact-submit:hover{background:#9f78aa}
-.bs-contact-page .bs-contact-privacy{color:#9d929f;font-size:11px;text-align:center}
-.bs-contact-page .bs-contact-notice{padding:12px 14px;border-radius:8px;background:#e9f7ef;color:#3e7654;font-size:13px;margin-bottom:16px}
+.bs-contact-page .bs-contact-form-card {
+  padding: 32px 35px 29px;
+  background: #fff;
+  border: 1px solid #efe6ed;
+  border-radius: 16px;
+  box-shadow: 0 13px 35px rgba(84,60,85,.06)
+}
+.bs-contact-page .bs-contact-form-heading {
+  margin-bottom: 24px
+}
+.bs-contact-page .bs-contact-form-heading h2 {
+  font-size: 23px;
+  font-weight: 800;
+  color: #55425e;
+  margin: 0 0 5px
+}
+.bs-contact-page .bs-contact-form-heading p {
+  font-size: 13px;
+  color: #9b8f9c
+}
+.bs-contact-page .bs-contact-form {
+  display: grid;
+  gap: 17px
+}
+.bs-contact-page .bs-contact-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px
+}
+.bs-contact-page .bs-contact-field label {
+  display: block;
+  font-size: 12px;
+  font-weight: 800;
+  color: #665669;
+  margin-bottom: 7px
+}
+.bs-contact-page .bs-contact-field label span {
+  color: #c989a0
+}
+.bs-contact-page .bs-contact-field input,.bs-contact-page .bs-contact-field textarea {
+  width: 100%;
+  border: 1px solid #ebdfeb;
+  background: #fffbfd;
+  color: #5b4b61;
+  font-size: 13px;
+  line-height: 1.6;
+  border-radius: 9px;
+  padding: 12px 14px;
+  outline: 0;
+  box-shadow: none
+}
+.bs-contact-page .bs-contact-field input::placeholder,.bs-contact-page .bs-contact-field textarea::placeholder {
+  color: #b3a7b3
+}
+.bs-contact-page .bs-contact-field input:focus,.bs-contact-page .bs-contact-field textarea:focus {
+  background: #fff;
+  border-color: #c3aacd;
+  box-shadow: 0 0 0 3px #ede4f0
+}
+.bs-contact-page .bs-contact-field textarea {
+  min-height: 140px;
+  resize: vertical
+}
+.bs-contact-page .bs-contact-submit {
+  border: 0;
+  border-radius: 9px;
+  background: #b792bb;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 800;
+  min-height: 46px;
+  cursor: pointer;
+  transition: background .2s
+}
+.bs-contact-page .bs-contact-submit:hover {
+  background: #9f78aa
+}
+.bs-contact-page .bs-contact-privacy {
+  color: #9d929f;
+  font-size: 11px;
+  text-align: center
+}
+.bs-contact-page .bs-contact-notice {
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: #e9f7ef;
+  color: #3e7654;
+  font-size: 13px;
+  margin-bottom: 16px
+}
 /* 04. Điện thoại: form xuống dưới nội dung, không tràn cột. */
-@media(max-width:830px){.bs-contact-page .bs-contact-layout{grid-template-columns:1fr;gap:20px}.bs-contact-page .bs-contact-body{padding:22px 18px 48px}.bs-contact-page .bs-contact-hero{padding:28px 18px 35px}.bs-contact-page .bs-contact-aside{padding:8px 0}.bs-contact-page .bs-contact-note{margin-top:20px}}
-@media(max-width:520px){.bs-contact-page .bs-contact-form-card{padding:24px 18px}.bs-contact-page .bs-contact-row{grid-template-columns:1fr}.bs-contact-page .bs-contact-hero h1{font-size:29px}}
-
+@media(max-width:830px) {
+  .bs-contact-page .bs-contact-layout {
+    grid-template-columns: 1fr;
+    gap: 20px
+  }
+  .bs-contact-page .bs-contact-body {
+    padding: 22px 18px 48px
+  }
+  .bs-contact-page .bs-contact-hero {
+    padding: 28px 18px 35px
+  }
+  .bs-contact-page .bs-contact-aside {
+    padding: 8px 0
+  }
+  .bs-contact-page .bs-contact-note {
+    margin-top: 20px
+  }
+}
+@media(max-width:520px) {
+  .bs-contact-page .bs-contact-form-card {
+    padding: 24px 18px
+  }
+  .bs-contact-page .bs-contact-row {
+    grid-template-columns: 1fr
+  }
+  .bs-contact-page .bs-contact-hero h1 {
+    font-size: 29px
+  }
+}
 /* 05. Tăng cỡ chữ: trước đây nhiều chỗ chỉ 10–13px, khó đọc.
    Giữ nguyên form, name của input, xử lý POST và bố cục hai cột. */
-.bs-contact-page {font-size: 16px;}
-.bs-contact-page .bs-contact-crumb {font-size: 14px;}
-.bs-contact-page .bs-contact-eyebrow {font-size: 12px;}
-.bs-contact-page .bs-contact-hero p {font-size: 17px;line-height:1.8;}
-.bs-contact-page .bs-contact-kicker {font-size: 14px;}
-.bs-contact-page .bs-contact-aside > p {font-size: 16px;}
-.bs-contact-page .bs-contact-note strong {font-size: 16px;}
-.bs-contact-page .bs-contact-note p {font-size: 15px;}
-.bs-contact-page .bs-contact-form-heading h2 {font-size: 27px;}
-.bs-contact-page .bs-contact-form-heading p {font-size: 16px;}
-.bs-contact-page .bs-contact-field label {font-size: 15px;margin-bottom:9px;}
+.bs-contact-page {
+  font-size: 16px;
+}
+.bs-contact-page .bs-contact-crumb {
+  font-size: 14px;
+}
+.bs-contact-page .bs-contact-eyebrow {
+  font-size: 12px;
+}
+.bs-contact-page .bs-contact-hero p {
+  font-size: 17px;
+  line-height: 1.8;
+}
+.bs-contact-page .bs-contact-kicker {
+  font-size: 14px;
+}
+.bs-contact-page .bs-contact-aside > p {
+  font-size: 16px;
+}
+.bs-contact-page .bs-contact-note strong {
+  font-size: 16px;
+}
+.bs-contact-page .bs-contact-note p {
+  font-size: 15px;
+}
+.bs-contact-page .bs-contact-form-heading h2 {
+  font-size: 27px;
+}
+.bs-contact-page .bs-contact-form-heading p {
+  font-size: 16px;
+}
+.bs-contact-page .bs-contact-field label {
+  font-size: 15px;
+  margin-bottom: 9px;
+}
 .bs-contact-page .bs-contact-field input,
-.bs-contact-page .bs-contact-field textarea {font-size: 16px;padding: 14px 16px;line-height:1.6;}
+.bs-contact-page .bs-contact-field textarea {
+  font-size: 16px;
+  padding: 14px 16px;
+  line-height: 1.6;
+}
 .bs-contact-page .bs-contact-field input::placeholder,
-.bs-contact-page .bs-contact-field textarea::placeholder {color:#918395;}
-.bs-contact-page .bs-contact-submit {font-size: 17px;min-height: 50px;}
-.bs-contact-page .bs-contact-privacy {font-size: 13px;line-height:1.6;}
-.bs-contact-page .bs-contact-notice {font-size: 15px;}
-@media(max-width:520px){.bs-contact-page .bs-contact-form-heading h2{font-size:25px;}}
+.bs-contact-page .bs-contact-field textarea::placeholder {
+  color: #918395;
+}
+.bs-contact-page .bs-contact-submit {
+  font-size: 17px;
+  min-height: 50px;
+}
+.bs-contact-page .bs-contact-privacy {
+  font-size: 13px;
+  line-height: 1.6;
+}
+.bs-contact-page .bs-contact-notice {
+  font-size: 15px;
+}
+@media(max-width:520px) {
+  .bs-contact-page .bs-contact-form-heading h2 {
+    font-size: 25px;
+  }
+}
