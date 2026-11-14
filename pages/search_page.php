@@ -16,7 +16,12 @@ if ($user_id <= 0) {
 }
 
 require_once __DIR__ . '/../config/product_actions.php';
-$message = array_merge($message ?? [], handle_product_action($conn, (int) $user_id, $_POST));
+$rawSearch = $_GET['search_box'] ?? $_POST['search_box'] ?? null;
+$hasSearch = is_string($rawSearch);
+$searchTerm = $hasSearch ? trim($rawSearch) : '';
+$returnUrl = 'search_page.php' . ($hasSearch ? '?' . http_build_query(['search_box' => $searchTerm]) : '');
+$message = process_product_request($conn, (int) $user_id, $_POST, $returnUrl);
+$wishlistProducts = product_wishlist_ids($conn, (int) $user_id);
 
 ?>
 
@@ -33,6 +38,7 @@ $message = array_merge($message ?? [], handle_product_action($conn, (int) $user_
    <link rel="stylesheet" href="../css/style.css">
    <link rel="stylesheet" href="../css/components/header.css">
    <link rel="stylesheet" href="../css/components/footer.css">
+   <link rel="stylesheet" href="../css/components/product-notice.css">
    <link rel="stylesheet" href="../css/components/product-card.css">
    <link rel="stylesheet" href="../css/components/search-form.css">
 
@@ -40,9 +46,7 @@ $message = array_merge($message ?? [], handle_product_action($conn, (int) $user_
 <body>
    
 <?php @include '../components/header.php'; ?>
-<?php foreach ($message as $notice): ?>
-<div class="message" role="status"><span><?= htmlspecialchars($notice, ENT_QUOTES, 'UTF-8') ?></span><i class="fas fa-times" onclick="this.parentElement.remove();"></i></div>
-<?php endforeach; ?>
+<?php include __DIR__ . '/../components/product_notice.php'; ?>
 
 <section class="heading">
     <h3>Tìm kiếm</h3>
@@ -50,21 +54,21 @@ $message = array_merge($message ?? [], handle_product_action($conn, (int) $user_
 </section>
 
 <section class="search-form">
-    <form action="" method="POST">
-        <input type="text" class="box" placeholder="Tìm kiếm sản phẩm..." name="search_box">
+    <form action="search_page.php" method="GET">
+        <input type="text" class="box" placeholder="Tìm kiếm sản phẩm..." name="search_box" value="<?= htmlspecialchars($searchTerm, ENT_QUOTES, 'UTF-8') ?>">
         <input type="submit" class="btn" value="Tìm kiếm" name="search_btn">
     </form>
 </section>
 <section class="products" style="padding-top: 0;">
    <div class="box-container">
       <?php
-        if (isset($_POST['search_box']) && is_string($_POST['search_box'])) {
-         $search_box = mysqli_real_escape_string($conn, $_POST['search_box']);
+        if ($hasSearch) {
+         $search_box = mysqli_real_escape_string($conn, $searchTerm);
          $select_products = mysqli_query($conn, "SELECT * FROM `products` WHERE name LIKE '%{$search_box}%'") or die('Lỗi truy vấn');
          if(mysqli_num_rows($select_products) > 0){
             while($fetch_products = mysqli_fetch_assoc($select_products)){
       ?>
-      <form action="" method="POST" class="box">
+      <form action="" method="POST" class="box" data-product-form>
          <a href="view_page.php?pid=<?php echo $fetch_products['id']; ?>" class="fas fa-eye"></a>
          <div class="price"><?php echo number_format($fetch_products['price'], 0, ',', '.'); ?> VNĐ</div>
          <img src="../uploaded_img/<?php echo htmlspecialchars(basename($fetch_products['image']), ENT_QUOTES, 'UTF-8'); ?>" alt="" class="image">
@@ -73,9 +77,9 @@ $message = array_merge($message ?? [], handle_product_action($conn, (int) $user_
          <div class="box-actions">
             <input type="number" name="product_quantity" value="1" min="1" max="99" class="qty">
             <input type="hidden" name="product_csrf" value="<?= htmlspecialchars($_SESSION['product_csrf'], ENT_QUOTES, 'UTF-8') ?>">
-            <input type="hidden" name="search_box" value="<?= htmlspecialchars($_POST['search_box'], ENT_QUOTES, 'UTF-8') ?>">
+            <input type="hidden" name="search_box" value="<?= htmlspecialchars($searchTerm, ENT_QUOTES, 'UTF-8') ?>">
             <input type="hidden" name="product_id" value="<?php echo $fetch_products['id']; ?>">
-            <button type="submit" name="add_to_wishlist" value="1" class="option-btn"><i class="fas fa-heart" aria-hidden="true"></i> Yêu thích</button>
+            <button type="submit" name="add_to_wishlist" value="1" class="option-btn" formnovalidate data-wishlist-saved="<?= isset($wishlistProducts[(int) $fetch_products['id']]) ? 'true' : 'false' ?>" title="<?= isset($wishlistProducts[(int) $fetch_products['id']]) ? 'Đã lưu vào yêu thích' : 'Thêm vào yêu thích' ?>"><i class="<?= isset($wishlistProducts[(int) $fetch_products['id']]) ? 'fas' : 'far' ?> fa-heart" aria-hidden="true"></i> Yêu thích</button>
             <input type="submit" value="Thêm vào giỏ hàng" name="add_to_cart" class="btn">
          </div>
       </form>
@@ -93,5 +97,6 @@ $message = array_merge($message ?? [], handle_product_action($conn, (int) $user_
 
 <?php @include '../components/footer.php'; ?>
 <script src="../js/script.js"></script>
+<script src="../js/product-actions.js"></script>
 </body>
 </html>

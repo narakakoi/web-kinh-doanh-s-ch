@@ -18,11 +18,8 @@ if (!isset($user_id)) {
 $message = [];
 
 require_once __DIR__ . '/config/product_actions.php';
-$actionHandler = 'handle_product_action';
-$actionMessages = is_callable($actionHandler)
-    ? $actionHandler($conn, (int) $user_id, $_POST)
-    : [];
-$message = array_merge($message ?? [], $actionMessages);
+$message = process_product_request($conn, (int) $user_id, $_POST, 'index.php');
+$wishlistProducts = product_wishlist_ids($conn, (int) $user_id);
 
 // BOOKSTORY / TRANG CHỦ: chỉ hiển thị voucher còn hiệu lực.
 // Cùng điều kiện lọc với checkout.php; nếu bảng chưa được cài, trang vẫn hoạt động.
@@ -59,6 +56,7 @@ try {
         <link rel="stylesheet" href="css/style.css">
         <link rel="stylesheet" href="css/components/header.css">
         <link rel="stylesheet" href="css/components/footer.css">
+        <link rel="stylesheet" href="css/components/product-notice.css">
         <link rel="stylesheet" href="css/components/product-card.css">
         <!-- CSS riêng trang chủ: khu ưu đãi và liên hệ, không đè các màn hình khác. -->
         <link rel="stylesheet" href="css/pages/home.css">
@@ -66,9 +64,7 @@ try {
     <body class="bs-home-page">
 
         <?php @include 'components/header.php'; ?>
-        <?php foreach ($message as $notice): ?>
-            <div class="message" role="status"><span><?= htmlspecialchars($notice, ENT_QUOTES, 'UTF-8') ?></span><i class="fas fa-times" onclick="this.parentElement.remove();"></i></div>
-        <?php endforeach; ?>
+        <?php include __DIR__ . '/components/product_notice.php'; ?>
         <section class="home">
 
             <div class ="homeslide fade">
@@ -219,7 +215,7 @@ try {
                 if (mysqli_num_rows($select_products) > 0) {
                     while ($fetch_products = mysqli_fetch_assoc($select_products)) {
                         ?>
-                        <form action="" method="POST" class="box">
+                        <form action="" method="POST" class="box" data-product-form>
                             <a href="pages/view_page.php?pid=<?php echo $fetch_products['id']; ?>" class="fas fa-eye"></a>
                             <div class="price"><?php echo number_format($fetch_products['price'], 0, ',', '.'); ?> VNĐ</div>
                             <a href="pages/view_page.php?pid=<?= (int) $fetch_products['id'] ?>">
@@ -234,7 +230,7 @@ try {
                                 <input type="number" name="product_quantity" value="1" min="1" max="99" class="qty">
                                 <input type="hidden" name="product_csrf" value="<?= htmlspecialchars($_SESSION['product_csrf'], ENT_QUOTES, 'UTF-8') ?>">
                                 <input type="hidden" name="product_id" value="<?php echo $fetch_products['id']; ?>">
-                                <button type="submit" name="add_to_wishlist" value="1" class="option-btn"><i class="fas fa-heart" aria-hidden="true"></i> Yêu thích</button>
+                                <button type="submit" name="add_to_wishlist" value="1" class="option-btn" formnovalidate data-wishlist-saved="<?= isset($wishlistProducts[(int) $fetch_products['id']]) ? 'true' : 'false' ?>" title="<?= isset($wishlistProducts[(int) $fetch_products['id']]) ? 'Đã lưu vào yêu thích' : 'Thêm vào yêu thích' ?>"><i class="<?= isset($wishlistProducts[(int) $fetch_products['id']]) ? 'fas' : 'far' ?> fa-heart" aria-hidden="true"></i> Yêu thích</button>
                                 <input type="submit" value="Thêm vào giỏ hàng" name="add_to_cart" class="btn">
                             </div>
                         </form>
@@ -260,7 +256,7 @@ try {
                 if (mysqli_num_rows($select_products) > 0) {
                     while ($fetch_products = mysqli_fetch_assoc($select_products)) {
                         ?>
-                        <form action="" method="POST" class="box">
+                        <form action="" method="POST" class="box" data-product-form>
                             <a href="pages/view_page.php?pid=<?php echo $fetch_products['id']; ?>" class="fas fa-eye"></a>
                             <div class="price"><?php echo number_format($fetch_products['price'], 0, ',', '.'); ?> VNĐ</div>
                             <a href="pages/view_page.php?pid=<?= (int) $fetch_products['id'] ?>">
@@ -275,7 +271,7 @@ try {
                                 <input type="number" name="product_quantity" value="1" min="1" max="99" class="qty">
                                 <input type="hidden" name="product_csrf" value="<?= htmlspecialchars($_SESSION['product_csrf'], ENT_QUOTES, 'UTF-8') ?>">
                                 <input type="hidden" name="product_id" value="<?php echo $fetch_products['id']; ?>">
-                                <button type="submit" name="add_to_wishlist" value="1" class="option-btn"><i class="fas fa-heart" aria-hidden="true"></i> Yêu thích</button>
+                                <button type="submit" name="add_to_wishlist" value="1" class="option-btn" formnovalidate data-wishlist-saved="<?= isset($wishlistProducts[(int) $fetch_products['id']]) ? 'true' : 'false' ?>" title="<?= isset($wishlistProducts[(int) $fetch_products['id']]) ? 'Đã lưu vào yêu thích' : 'Thêm vào yêu thích' ?>"><i class="<?= isset($wishlistProducts[(int) $fetch_products['id']]) ? 'fas' : 'far' ?> fa-heart" aria-hidden="true"></i> Yêu thích</button>
                                 <input type="submit" value="Thêm vào giỏ hàng" name="add_to_cart" class="btn">
                             </div>
                         </form>
@@ -323,6 +319,7 @@ try {
 
         <?php @include 'components/footer.php'; ?>
         <script src="js/script.js"></script>
+        <script src="js/product-actions.js"></script>
         <!--
             <script>
                 let slideIndex = 0;

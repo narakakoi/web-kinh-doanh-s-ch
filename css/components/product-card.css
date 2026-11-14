@@ -159,11 +159,14 @@
 .products .box-container .box .box-actions .option-btn i {
   font-size: 1.3rem;
   line-height: 1;
-  color: var(--black);
+  color: inherit;
 }
 
-.products .box-container .box .box-actions .option-btn:hover i {
-  color: var(--white);
+.products .box-container .box .box-actions .option-btn:hover i,
+.products .box-container .box .box-actions .option-btn:focus-visible i,
+.products .box-container .box .box-actions .option-btn[data-wishlist-saved="true"] i {
+  color: var(--wishlist-heart);
+  font-weight: 900;
 }
 
 .more-btn {

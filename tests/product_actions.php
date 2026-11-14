@@ -47,4 +47,23 @@ handle_product_action($conn, 8, $input);
 $input['product_csrf'] = [];
 handle_product_action($conn, 8, $input);
 check((int) mysqli_fetch_row(mysqli_query($conn, 'SELECT COUNT(*) FROM cart WHERE user_id = 8'))[0] === 0, 'Invalid requests changed cart');
+
+// A wishlist request must remain a wishlist request even if the book is in cart.
+$wish = ['product_csrf' => $_SESSION['product_csrf'], 'product_id' => 1,
+    'product_quantity' => 0, 'add_to_wishlist' => 1];
+http_response_code(200);
+handle_product_action($conn, 7, $wish);
+check((int) mysqli_fetch_row(mysqli_query($conn, 'SELECT COUNT(*) FROM wishlist WHERE user_id = 7 AND pid = 1'))[0] === 1, 'Book in cart was blocked from wishlist');
+check((int) mysqli_fetch_row(mysqli_query($conn, 'SELECT COUNT(*) FROM cart WHERE user_id = 7'))[0] === 2, 'Wishlist action changed cart');
+handle_product_action($conn, 7, $wish);
+check((int) mysqli_fetch_row(mysqli_query($conn, 'SELECT COUNT(*) FROM wishlist WHERE user_id = 7'))[0] === 1, 'Repeated wishlist request created duplicates');
+check(product_wishlist_ids($conn, 7) === [1 => true], 'Saved-state IDs are incorrect');
+check(product_header_counts($conn, 7) === ['cart_count' => 2, 'wishlist_count' => 1], 'Header counts are incorrect');
+
+$ambiguous = ['product_csrf' => $_SESSION['product_csrf'], 'product_id' => 2,
+    'product_quantity' => 1, 'add_to_cart' => 1, 'add_to_wishlist' => 1];
+http_response_code(200);
+handle_product_action($conn, 9, $ambiguous);
+check(http_response_code() === 400, 'Ambiguous action must be rejected instead of preferring cart');
+check(product_header_counts($conn, 9) === ['cart_count' => 0, 'wishlist_count' => 0], 'Ambiguous action changed data');
 echo "Product actions and password compatibility checks passed\n";

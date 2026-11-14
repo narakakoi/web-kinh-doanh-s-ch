@@ -193,8 +193,9 @@
   border-color: #b9a3d5
 }
 .bs-view-page .bs-view-like:hover i,
-.bs-view-page .bs-view-like:focus-visible i {
-  color: #fdc2da;
+.bs-view-page .bs-view-like:focus-visible i,
+.bs-view-page .bs-view-like[data-wishlist-saved="true"] i {
+  color: var(--wishlist-heart);
   font-weight: 900;
 }
 /* 04. Mô tả sách riêng, dễ đọc */
