@@ -192,6 +192,10 @@
   background: #f7f1ff;
   border-color: #b9a3d5
 }
+.bs-view-page .bs-view-like:hover i,
+.bs-view-page .bs-view-like:focus-visible i {
+  color: #b48c9c
+}
 /* 04. Mô tả sách riêng, dễ đọc */
 .bs-view-page .bs-view-description {
   padding: 32px 38px;
