@@ -10,7 +10,7 @@ function respond(int $statusCode, array $response): void
     exit();
 }
 
-function amountToMinorUnits($amount): ?int
+function amountToMinorUnits(string|int|float $amount): ?int
 {
     $amount = (string) $amount;
     if (!preg_match('/^\d+(?:\.\d{1,2})?$/', $amount)) {
