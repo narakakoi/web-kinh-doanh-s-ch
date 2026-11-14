@@ -12,7 +12,7 @@
   function scheduleDismiss() {
     window.clearTimeout(dismissTimer);
     if (dismissAutomatically && !toast.matches(':hover, :focus-within')) {
-      dismissTimer = window.setTimeout(() => { toast.hidden = true; }, 4500);
+      dismissTimer = window.setTimeout(() => { toast.hidden = true; }, 1000);
     }
   }
   function showNotice(message, error = false) {
