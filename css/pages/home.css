@@ -8,14 +8,6 @@
    ================================================================ */
 @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Nunito:wght@400;500;600;700;800;900&display=swap');
 
-/* Căn giữa toàn bộ section của index, kể cả footer.
-   1240px nội dung + 44px đệm giữ nguyên kích thước lưới sách hiện tại.
-   Chỉ giới hạn khung ngoài; cách căn chữ trong từng khối được giữ nguyên. */
-.bs-home-page > section {
-  width: 100%;
-  max-width: 1284px;
-  margin-inline: auto;
-}
 
 /* Bố cục gốc chuyển từ css/style.css; giữ thứ tự trước palette. */
 .home {
