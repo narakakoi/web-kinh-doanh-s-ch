@@ -1,0 +1,116 @@
+/* ====================================================================
+   BOOKSTORY · TRANG ĐƠN HÀNG (pages/orders.php)
+   Chỉ dùng bên trong .bs-orders, KHÔNG ảnh hưởng header/footer/trang admin.
+   Thứ tự: style.css -> commerce.css -> orders.css.
+   ==================================================================== */
+
+/* 01. Khung trang và thẻ thống kê */
+.bs-orders {background:#fcfafd;}
+.bs-orders .bs-orders-overview,
+.bs-orders .bs-orders-list {padding:0;}
+.bs-orders .bs-orders-overview {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:17px;margin:0 0 35px;}
+.bs-orders .bs-orders-stat {display:flex;align-items:center;gap:16px;min-height:105px;padding:21px 23px;background:#fff;border:1px solid #eee8f2;border-radius:16px;box-shadow:0 8px 25px rgba(51,39,91,.035);}
+.bs-orders .bs-orders-stat-icon {display:grid;place-items:center;flex:0 0 50px;width:50px;height:50px;border-radius:15px;background:#f3eaff;color:#8055c2;font-size:21px;}
+.bs-orders .bs-orders-stat-icon.is-warning {background:#fff4e4;color:#d29131;}
+.bs-orders .bs-orders-stat-icon.is-success {background:#eaf8f0;color:#209666;}
+.bs-orders .bs-orders-stat small {display:block;font-size:12px;color:#898094;font-weight:650;margin-bottom:5px;}
+.bs-orders .bs-orders-stat strong {display:block;font-size:27px;line-height:1.05;color:#312a42;font-weight:800;}
+.bs-orders .bs-orders-section-title {display:flex;align-items:end;justify-content:space-between;gap:20px;margin-bottom:18px;}
+.bs-orders .bs-orders-section-title h2 {margin:5px 0 0;color:#342d43;font-size:23px;font-weight:800;}
+.bs-orders .bs-orders-count {background:#f2eafd;color:#7351a1;border:1px solid #e6daf5;padding:8px 12px;border-radius:30px;font-size:12px;font-weight:800;white-space:nowrap;}
+.bs-orders .bs-orders-empty {margin-bottom:20px;}
+
+/* 02. Thẻ đơn hàng, mã đơn, ngày đặt và badge trạng thái */
+.bs-orders .bs-order-card {margin-bottom:20px;}
+.bs-orders .bs-order-head {display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:19px 25px;border-bottom:1px solid #eee8f2;background:linear-gradient(100deg,#fff,#fbf7ff);}
+.bs-orders .bs-order-identity {display:flex;align-items:center;gap:17px;flex-wrap:wrap;}
+.bs-orders .bs-order-id {color:#403454;font-size:15px;font-weight:800;}
+.bs-orders .bs-order-id i {margin-right:7px;color:#9966e8;}
+.bs-orders .bs-order-date {display:inline-flex;align-items:center;gap:7px;font-size:12px;color:#8b809b;}
+.bs-orders .bs-order-status {display:inline-flex;align-items:center;gap:7px;border-radius:30px;padding:8px 12px;font-size:12px;font-weight:800;white-space:nowrap;}
+.bs-orders .bs-order-status-pending {background:#fff3df;color:#a9791e;}
+.bs-orders .bs-order-status-paid {background:#e7f7ec;color:#16804c;}
+.bs-orders .bs-order-status-failed {background:#fff0f0;color:#c34456;}
+.bs-orders .bs-order-status-cancelled {background:#f0eff2;color:#6e6874;}
+.bs-orders .bs-order-status-other {background:#eeeaff;color:#7256b1;}
+
+/* 03. Nội dung chia 2 cột: giao hàng bên trái, sản phẩm bên phải */
+.bs-orders .bs-order-body {display:grid;grid-template-columns:minmax(250px,.84fr) minmax(0,1.5fr);}
+.bs-orders .bs-order-info,
+.bs-orders .bs-order-products {padding:24px 26px 27px;min-width:0;}
+.bs-orders .bs-order-info {border-right:1px solid #eee8f2;background:#fff;}
+.bs-orders .bs-order-info h3,
+.bs-orders .bs-order-products h3 {display:flex;align-items:center;gap:9px;font-size:15px;font-weight:800;color:#3d344e;margin:0 0 20px;}
+.bs-orders .bs-order-info h3 i,
+.bs-orders .bs-order-products h3 i {color:#9668dd;font-size:14px;}
+.bs-orders .bs-order-details {display:grid;gap:16px;margin:0;}
+.bs-orders .bs-order-details > div {display:grid;gap:5px;}
+.bs-orders .bs-order-details dt {font-size:11px;color:#8b8295;font-weight:650;}
+.bs-orders .bs-order-details dd {margin:0;font-size:13px;color:#42374d;line-height:1.55;font-weight:750;}
+.bs-orders .bs-order-break {overflow-wrap:anywhere;}
+
+/* 04. Bảng sách - giữ giá và số lượng ở các cột rõ ràng */
+.bs-orders .bs-order-table {width:100%;}
+.bs-orders .bs-order-table-row {display:grid;grid-template-columns:minmax(0,1fr) 37px 117px 123px;align-items:center;gap:10px;padding:14px 0;border-bottom:1px solid #f0ebf4;font-size:12px;color:#63596d;}
+.bs-orders .bs-order-table-row:last-child {border-bottom:0;}
+.bs-orders .bs-order-table-head {padding:9px 0 12px;color:#8d8299;font-size:11px;font-weight:800;}
+.bs-orders .bs-order-table-row > :not(:first-child) {text-align:right;}
+.bs-orders .bs-order-book-name {font-weight:800;line-height:1.55;color:#42384f;overflow-wrap:anywhere;}
+.bs-orders .bs-order-qty {font-weight:750;}
+.bs-orders .bs-order-line {color:#7b4eb9;font-size:12px;font-weight:800;white-space:nowrap;}
+.bs-orders .bs-order-unit {white-space:nowrap;}
+.bs-orders .bs-order-discount {margin-top:13px;display:flex;align-items:center;gap:7px;padding:11px 13px;border:1px dashed #e2d0f5;border-radius:10px;background:#faf6ff;color:#7a56ad;font-size:12px;font-weight:750;}
+.bs-orders .bs-order-fallback {font-size:13px;line-height:1.7;color:#62566c;overflow-wrap:anywhere;}
+
+/* 05. Tổng tiền và các nút giữ chức năng POST/CSRF như cũ */
+.bs-orders .bs-order-bottom {display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;padding:20px 26px;background:#faf8fc;border-top:1px solid #eee8f2;}
+.bs-orders .bs-order-total {display:flex;align-items:center;gap:17px;flex-wrap:wrap;}
+.bs-orders .bs-order-total span {font-size:12px;color:#82768c;font-weight:750;}
+.bs-orders .bs-order-total strong {font-size:22px;color:#7950b7;font-weight:800;white-space:nowrap;}
+.bs-orders .bs-order-actions {display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap;}
+.bs-orders .bs-order-actions form {margin:0;}
+.bs-orders .bs-order-actions .bs-btn {margin:0;font-size:12px;min-height:41px;}
+.bs-orders .bs-order-delete {background:#fff;border-color:#f0ced5;color:#bc4a61;}
+.bs-orders .bs-order-delete:hover {background:#fff1f4;border-color:#df9aaa;color:#a5304b;}
+.bs-orders .bs-order-final-note {display:inline-flex;align-items:center;gap:7px;color:#7c7285;font-size:12px;font-weight:650;}
+
+/* 06. Responsive: tablet 1 cột, mobile bảng thu gọn nhưng không tràn ngang */
+@media(max-width:1020px){
+  .bs-orders .bs-order-body {grid-template-columns:minmax(220px,.8fr) minmax(0,1.4fr);}
+  .bs-orders .bs-order-table-row {grid-template-columns:minmax(0,1fr) 26px 95px 107px;gap:7px;font-size:11px;}
+  .bs-orders .bs-order-info,.bs-orders .bs-order-products {padding:21px 20px;}
+}
+@media(max-width:800px){
+  .bs-orders .bs-orders-overview {gap:10px;}
+  .bs-orders .bs-orders-stat {padding:15px;gap:10px;min-height:85px;}
+  .bs-orders .bs-orders-stat-icon {flex-basis:40px;width:40px;height:40px;font-size:16px;}
+  .bs-orders .bs-order-body {grid-template-columns:1fr;}
+  .bs-orders .bs-order-info {border-right:0;border-bottom:1px solid #eee8f2;}
+  .bs-orders .bs-order-details {grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 20px;}
+  .bs-orders .bs-order-table-row {grid-template-columns:minmax(0,1fr) 42px 120px 130px;font-size:12px;}
+}
+@media(max-width:560px){
+  .bs-orders .bs-orders-overview {grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-bottom:28px;}
+  .bs-orders .bs-orders-stat {flex-direction:column;align-items:flex-start;min-height:115px;padding:12px 10px;gap:8px;}
+  .bs-orders .bs-orders-stat-icon {width:32px;height:32px;flex-basis:32px;border-radius:10px;font-size:13px;}
+  .bs-orders .bs-orders-stat small {font-size:10px;line-height:1.3;min-height:26px;}
+  .bs-orders .bs-orders-stat strong {font-size:20px;}
+  .bs-orders .bs-orders-section-title h2 {font-size:20px;}
+  .bs-orders .bs-order-head {padding:16px;align-items:flex-start;}
+  .bs-orders .bs-order-identity {gap:7px;flex-direction:column;align-items:flex-start;}
+  .bs-orders .bs-order-info,.bs-orders .bs-order-products {padding:19px 16px;}
+  .bs-orders .bs-order-details {grid-template-columns:1fr;}
+  .bs-orders .bs-order-table-row {grid-template-columns:minmax(0,1fr) 24px 110px;gap:7px;font-size:11px;}
+  .bs-orders .bs-order-table-row > :nth-child(3) {display:none;}
+  .bs-orders .bs-order-table-row > :nth-child(4) {grid-column:3;}
+  .bs-orders .bs-order-bottom {padding:18px 16px;align-items:stretch;}
+  .bs-orders .bs-order-total {justify-content:space-between;width:100%;}
+  .bs-orders .bs-order-actions {justify-content:stretch;width:100%;}
+  .bs-orders .bs-order-actions a,.bs-orders .bs-order-actions form {flex:1 1 auto;}
+  .bs-orders .bs-order-actions .bs-btn {width:100%;}
+  .bs-orders .bs-order-actions form {display:block;}
+}
+@media(max-width:380px){
+  .bs-orders .bs-order-table-row {grid-template-columns:minmax(0,1fr) 20px 87px;}
+  .bs-orders .bs-order-line {font-size:10px;}
+}
