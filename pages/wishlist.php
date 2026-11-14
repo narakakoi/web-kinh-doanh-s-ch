@@ -1,6 +1,12 @@
 <?php
 // BookStory / Wishlist: mọi thao tác thay đổi dữ liệu đều dùng POST + CSRF.
 require_once '../config/config.php';
+
+if (!isset($conn) || !($conn instanceof mysqli)) {
+    http_response_code(500);
+    exit('Không thể kết nối cơ sở dữ liệu.');
+}
+
 session_start();
 $user_id = (int) ($_SESSION['user_id'] ?? 0);
 if ($user_id <= 0) {

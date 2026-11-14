@@ -4,8 +4,13 @@
  * Giao diện mới tách CSS theo từng trang: css/pages/orders.css.
  * Nghiệp vụ giữ nguyên: chỉ xem đơn của tài khoản, xóa đơn pending bằng POST + CSRF.
  */
-@include '../config/config.php';
+require_once '../config/config.php';
 require_once '../config/order_items.php';
+
+if (!isset($conn) || !($conn instanceof mysqli)) {
+    http_response_code(500);
+    exit('Không thể kết nối cơ sở dữ liệu.');
+}
 
 session_start();
 $user_id = (int) ($_SESSION['user_id'] ?? 0);

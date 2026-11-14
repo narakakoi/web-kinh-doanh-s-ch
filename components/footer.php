@@ -1,5 +1,5 @@
 <?php
-@include '../config/config.php'; // Bao gồm tập tin functions.php
+require_once '../config/config.php';
 ?>
 
 <section class="footer">

@@ -1,64 +1,60 @@
 <?php
-if (file_exists(__DIR__ . '/../config/config.php')) {
-    require __DIR__ . '/../config/config.php';
-} else {
-    die('Không tìm thấy tệp cấu hình cơ sở dữ liệu.');
-}
+require_once __DIR__ . '/../config/config.php';
 
-if (!isset($conn) || !$conn) {
-    die('Biến kết nối cơ sở dữ liệu chưa được khởi tạo.');
+if (!isset($conn) || !($conn instanceof mysqli)) {
+    http_response_code(500);
+    exit('Không thể kết nối cơ sở dữ liệu.');
 }
 
 session_start();
 
-$user_id = $_SESSION['user_id'] ?? null;
+$user_id = (int) ($_SESSION['user_id'] ?? 0);
 
-if(!isset($user_id)){
+if ($user_id <= 0) {
    header('location:../pages/login.php');
    exit();
 }
 
-if(isset($_POST['add_to_wishlist'])){
-    $product_id = $_POST['product_id'];
-    $product_name = $_POST['product_name'];
-    $product_price = $_POST['product_price'];
-    $product_image = $_POST['product_image'];
+if (isset($_POST['add_to_wishlist'])) {
+    $product_id = (int) ($_POST['product_id'] ?? 0);
+    $product_name = mysqli_real_escape_string($conn, trim((string) ($_POST['product_name'] ?? '')));
+    $product_price = (float) ($_POST['product_price'] ?? 0);
+    $product_image = mysqli_real_escape_string($conn, trim((string) ($_POST['product_image'] ?? '')));
 
     $check_wishlist_numbers = mysqli_query($conn, "SELECT * FROM `wishlist` WHERE name = '$product_name' AND user_id = '$user_id'") or die('Lỗi truy vấn');
 
     $check_cart_numbers = mysqli_query($conn, "SELECT * FROM `cart` WHERE name = '$product_name' AND user_id = '$user_id'") or die('Lỗi truy vấn');
 
-    if(mysqli_num_rows($check_wishlist_numbers) > 0){
+    if (mysqli_num_rows($check_wishlist_numbers) > 0) {
         $message[] = 'Sản phẩm đã có trong danh sách yêu thích';
-    }elseif(mysqli_num_rows($check_cart_numbers) > 0){
+    } elseif (mysqli_num_rows($check_cart_numbers) > 0) {
         $message[] = 'Sản phẩm đã có trong giỏ hàng';
-    }else{
+    } else {
         mysqli_query($conn, "INSERT INTO `wishlist`(user_id, pid, name, price, image) VALUES('$user_id', '$product_id', '$product_name', '$product_price', '$product_image')") or die('Lỗi truy vấn');
         $message[] = 'Sản phẩm đã được thêm vào danh sách yêu thích';
     }
 }
 
-if(isset($_POST['add_to_cart'])){
-    $product_id = $_POST['product_id'];
-    $product_name = $_POST['product_name'];
-    $product_price = $_POST['product_price'];
-    $product_image = $_POST['product_image'];
-    $product_quantity = $_POST['product_quantity'];
+if (isset($_POST['add_to_cart'])) {
+    $product_id = (int) ($_POST['product_id'] ?? 0);
+    $product_name = mysqli_real_escape_string($conn, trim((string) ($_POST['product_name'] ?? '')));
+    $product_price = (float) ($_POST['product_price'] ?? 0);
+    $product_image = mysqli_real_escape_string($conn, trim((string) ($_POST['product_image'] ?? '')));
+    $product_quantity = max(1, (int) ($_POST['product_quantity'] ?? 1));
 
     $check_cart_numbers = mysqli_query($conn, "SELECT * FROM `cart` WHERE name = '$product_name' AND user_id = '$user_id'") or die('Lỗi truy vấn');
 
-    if(mysqli_num_rows($check_cart_numbers) > 0){
+    if (mysqli_num_rows($check_cart_numbers) > 0) {
         $message[] = 'Sản phẩm đã có trong giỏ hàng';
-    }else{
+    } else {
         $check_wishlist_numbers = mysqli_query($conn, "SELECT * FROM `wishlist` WHERE name = '$product_name' AND user_id = '$user_id'") or die('Lỗi truy vấn');
-        if(mysqli_num_rows($check_wishlist_numbers) > 0){
+        if (mysqli_num_rows($check_wishlist_numbers) > 0) {
             mysqli_query($conn, "DELETE FROM `wishlist` WHERE name = '$product_name' AND user_id = '$user_id'") or die('Lỗi truy vấn');
         }
         mysqli_query($conn, "INSERT INTO `cart`(user_id, pid, name, price, quantity, image) VALUES('$user_id', '$product_id', '$product_name', '$product_price', '$product_quantity', '$product_image')") or die('Lỗi truy vấn');
         $message[] = 'Sản phẩm đã được thêm vào giỏ hàng';
     }
 }
-
 ?>
 
 <!DOCTYPE html>
