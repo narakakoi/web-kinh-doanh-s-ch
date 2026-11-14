@@ -59,7 +59,6 @@ $message = array_merge($message ?? [], handle_product_action($conn, (int) $user_
                <h1><?= $bookName ?></h1>
                <div class="bs-view-price"><span>Giá bán</span><strong><?= number_format((float) $fetch_products['price'], 0, ',', '.') ?> đ</strong><small>Giá hiển thị cho một cuốn sách</small></div>
                <div class="bs-view-action-area"><label for="bs-product-qty">Số lượng</label><div class="bs-view-purchase"><input type="number" id="bs-product-qty" name="product_quantity" value="1" min="1" max="99" required aria-label="Số lượng sách"><button type="submit" name="add_to_cart" value="1" class="bs-view-add-cart"><i class="fas fa-shopping-cart" aria-hidden="true"></i> Thêm vào giỏ hàng</button></div><button type="submit" name="add_to_wishlist" value="1" class="bs-view-like"><i class="far fa-heart" aria-hidden="true"></i> Thêm vào yêu thích</button></div>
-               <div class="bs-view-advantages"><div><i class="fas fa-shield-alt" aria-hidden="true"></i><span>Kiểm tra đơn trước khi thanh toán</span></div><div><i class="fas fa-list-alt" aria-hidden="true"></i><span>Theo dõi đơn hàng của bạn</span></div></div>
                <!-- Giữ tên hidden field tương thích với PHP xử lý giỏ hàng hiện tại. -->
                <input type="hidden" name="product_csrf" value="<?= htmlspecialchars($_SESSION['product_csrf'], ENT_QUOTES, 'UTF-8') ?>">
             <input type="hidden" name="product_id" value="<?= (int) $fetch_products['id'] ?>">
