@@ -1,0 +1,180 @@
+/* pages/checkout.php: thẻ QR, pending/success, spinner và fallback. */
+.sepay-payment-card {
+  max-width: 62rem;
+  margin: 0 auto 2rem;
+  padding: 2.5rem;
+  background: var(--white);
+  border: 1px solid rgba(153, 102, 255, 0.3);
+  border-radius: 1.2rem;
+  box-shadow: var(--box-shadow);
+}
+
+.sepay-payment-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  text-align: left;
+  padding-bottom: 1.8rem;
+  border-bottom: 1px solid rgba(51, 51, 51, 0.12);
+}
+
+.sepay-payment-icon {
+  display: grid;
+  place-items: center;
+  width: 4.8rem;
+  height: 4.8rem;
+  flex: 0 0 4.8rem;
+  color: var(--white);
+  background: var(--brown);
+  border-radius: 50%;
+  font-size: 2.2rem;
+}
+
+.sepay-payment-header h3 {
+  margin: 0 0 0.5rem;
+  color: var(--black);
+  font-size: 2.3rem;
+}
+
+.payment-status {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+
+.payment-status-pending {
+  color: #b7791f;
+}
+
+.payment-status-success {
+  color: #16803c;
+}
+
+.sepay-instruction {
+  margin: 2rem 0 1.5rem;
+  color: var(--light-color);
+  font-size: 1.7rem;
+}
+
+.sepay-qr-wrapper {
+  width: min(30rem, 100%);
+  margin: 0 auto 1.8rem;
+  padding: 1rem;
+  background: var(--white);
+  border: 1px solid rgba(51, 51, 51, 0.15);
+  border-radius: 0.8rem;
+}
+
+.sepay-qr-wrapper img {
+  display: block;
+  width: 100%;
+}
+
+.sepay-payment-details {
+  display: grid;
+  gap: 0.8rem;
+  padding: 1.5rem;
+  text-align: left;
+  background: var(--light-bg);
+  border-radius: 0.8rem;
+}
+
+.sepay-payment-details div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 1.6rem;
+}
+
+.sepay-payment-details span {
+  color: var(--light-color);
+}
+
+.sepay-payment-details strong {
+  color: var(--black);
+  text-align: right;
+}
+
+.sepay-payment-details div:first-child strong {
+  color: var(--red);
+}
+
+.sepay-note {
+  margin: 1.5rem 0;
+  color: var(--light-color);
+  font-size: 1.4rem;
+}
+
+.sepay-note i {
+  color: var(--brown);
+}
+
+.sepay-waiting {
+  color: var(--light-color);
+  font-size: 1.5rem;
+}
+
+.sepay-spinner {
+  display: inline-block;
+  width: 1.4rem;
+  height: 1.4rem;
+  margin-right: 0.5rem;
+  vertical-align: -0.2rem;
+  border: 0.2rem solid rgba(153, 102, 255, 0.25);
+  border-top-color: var(--brown);
+  border-radius: 50%;
+  animation: sepay-spin 0.8s linear infinite;
+}
+
+@keyframes sepay-spin {
+  to { transform: rotate(360deg); }
+}
+
+.sepay-success-content {
+  padding: 3rem 1rem 1rem;
+}
+
+.sepay-success-icon {
+  display: grid;
+  place-items: center;
+  width: 7rem;
+  height: 7rem;
+  margin: 0 auto 1.5rem;
+  color: var(--white);
+  background: #22a559;
+  border-radius: 50%;
+  font-size: 3.5rem;
+}
+
+.sepay-success-content h4 {
+  margin: 0 0 0.8rem;
+  color: #16803c;
+  font-size: 2.5rem;
+}
+
+.sepay-success-content p {
+  margin: 0 0 2rem;
+  color: var(--light-color);
+  font-size: 1.7rem;
+}
+
+.payment-unavailable {
+  max-width: 62rem;
+  margin: 0 auto 2rem;
+  padding: 2rem;
+  color: var(--light-color);
+  background: var(--white);
+  border-radius: 0.8rem;
+  box-shadow: var(--box-shadow);
+  font-size: 1.7rem;
+}
+
+.payment-unavailable i {
+  margin-bottom: 1rem;
+  color: #b7791f;
+  font-size: 3rem;
+}
+
+.payment-unavailable p {
+  margin: 0;
+}

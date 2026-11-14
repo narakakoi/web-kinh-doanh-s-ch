@@ -2,9 +2,103 @@
    BOOKSTORY / ABOUT.CSS - PASTEL V4
    Giữ nguyên tất cả nội dung, ảnh, các khối flex và review của about.php.
    Chỉ thay bảng màu, font và độ bo nhẹ để thống nhất Trang chủ/Cửa hàng.
-   Không đụng đến css/style.css và các trang khác.
+   Bố cục và palette riêng; chỉ nạp từ pages/about.php.
    ===================================================================== */
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
+
+/* Bố cục gốc chuyển từ css/style.css; giữ thứ tự trước palette. */
+/* Trang giới thiệu - about */
+
+.about .flex {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.about .flex .image {
+  flex: 1 1 40rem;
+}
+
+.about .flex .image img {
+  width: 100%;
+}
+
+.about .flex .content {
+  flex: 1 1 40rem;
+  text-align: center;
+}
+
+.about .flex .content h3 {
+  font-size: 3rem;
+  text-transform: capitalize;
+  color: var(--black);
+}
+
+.about .flex .content p {
+  padding: 1rem 0;
+  font-size: 1.5rem;
+  color: var(--light-color);
+  line-height: 2;
+}
+
+.about .flex:nth-child(2) {
+  margin: 3rem auto;
+  flex-wrap: wrap-reverse;
+}
+
+.reviews .box-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(30rem, 1fr));
+  gap: 1.5rem;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.reviews .box-container .box {
+  padding: 2rem;
+  text-align: center;
+  background-color: var(--white);
+  box-shadow: var(--box-shadow);
+  border: var(--border);
+  border-radius: 0.5rem;
+}
+
+.reviews .box-container .box img {
+  height: 10rem;
+  width: 10rem;
+  border-radius: 50%;
+}
+
+.reviews .box-container .box p {
+  padding: 1rem 0;
+  font-size: 1.5rem;
+  color: var(--light-color);
+  line-height: 2;
+}
+
+.reviews .box-container .box .stars {
+  display: inline-block;
+  border-radius: 0.5rem;
+  padding: 1rem 1.5rem;
+}
+
+.reviews .box-container .box .stars i {
+  color: var(--orange);
+  font-size: 1.7rem;
+  margin: 0 0.3rem;
+}
+
+.reviews .box-container .box h3 {
+  font-size: 2rem;
+  color: var(--black);
+  margin-top: 1rem;
+}
+
 .bs-about-page {
   background: #fffafd;
   color: #66566e;

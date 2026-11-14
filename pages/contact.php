@@ -38,6 +38,8 @@ if (isset($_POST['send'])) {
    <title>Liên hệ | BookStory</title>
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
    <link rel="stylesheet" href="../css/style.css">
+   <link rel="stylesheet" href="../css/components/header.css">
+   <link rel="stylesheet" href="../css/components/footer.css">
    <!-- CSS trang liên hệ: tách riêng để giữ nguyên giao diện các trang khác. -->
    <link rel="stylesheet" href="../css/pages/contact.css">
 </head>

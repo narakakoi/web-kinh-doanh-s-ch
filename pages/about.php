@@ -27,6 +27,8 @@ if ($user_id <= 0) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- liên kết tệp CSS tùy chỉnh -->
     <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/components/header.css">
+    <link rel="stylesheet" href="../css/components/footer.css">
     <!-- Chỉ nạp palette pastel cho trang Về chúng tôi. -->
     <link rel="stylesheet" href="../css/pages/about.css">
 </head>

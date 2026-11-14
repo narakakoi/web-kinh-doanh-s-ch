@@ -1,0 +1,297 @@
+/* components/header.php: logo, menu, tài khoản và responsive. */
+/* Logo fonts are self-hosted so the wordmark never falls back to a system
+   script when Google Fonts is blocked, offline or slow. */
+@font-face {
+  font-family: "Kaushan Script";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../../fonts/kaushan-script-latin.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Russo One";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../../fonts/russo-one-latin.woff2") format("woff2");
+}
+
+@keyframes fadeIn {
+  0% {
+    transform: translateY(1rem);
+  }
+}
+
+/* Header */
+
+.header {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: var(--white);
+  z-index: 1000;
+  box-shadow: var(--box-shadow);
+}
+
+.header .flex {
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 2px;
+  max-width: 1300px;
+  position: relative;
+}
+
+/* Logo lockup: brush wordmark + hanko seal.
+   Every part below is em-based, so the lockup scales from this single
+   font-size (the html font-size steps at 991px / 450px handle the rest). */
+.header .flex .logo {
+  display: inline-flex;
+  align-items: flex-end;
+  flex: none;
+  font-size: 3.2rem;
+  line-height: 1;
+  color: var(--black);
+  transform: rotate(-1.5deg);
+  transform-origin: left bottom;
+}
+
+.header .flex .logo:hover {
+  transform: rotate(-0.4deg);
+}
+
+.header .flex .logo:focus-visible {
+  outline: 0.2rem dashed var(--brown);
+  outline-offset: 0.4rem;
+}
+
+/* three ink speed lines feeding into the first letter */
+.header .flex .logo .logo-speed-lines {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.065em;
+  margin-right: 0.145em;
+  margin-bottom: 0.32em;
+}
+
+.header .flex .logo .logo-speed {
+  display: block;
+  background-color: #15151a;
+}
+
+.header .flex .logo .logo-speed-lg {
+  width: 0.42em;
+  height: 0.085em;
+}
+
+.header .flex .logo .logo-speed-md {
+  width: 0.7em;
+  height: 0.06em;
+}
+
+.header .flex .logo .logo-speed-sm {
+  width: 0.34em;
+  height: 0.045em;
+}
+
+/* brush lettering with the violet ink offset trailing to the right */
+.header .flex .logo .logo-wordmark {
+  font-family: "Kaushan Script", "Segoe Script", "Brush Script MT", cursive;
+  font-size: 1em;
+  line-height: 0.8;
+  white-space: nowrap;
+  color: #141417;
+  text-shadow: 0.07em 0.06em 0 var(--brown);
+  -webkit-text-stroke: 0.011em #141417;
+}
+
+.header .flex .logo:hover .logo-wordmark {
+  text-shadow: 0.1em 0.075em 0 var(--brown);
+}
+
+/* hanko seal, tilted off the baseline */
+.header .flex .logo .logo-seal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 0.72em;
+  height: 0.72em;
+  margin-left: 0.177em;
+  margin-bottom: 0.2em;
+  background-color: var(--brown);
+  transform: rotate(-7deg);
+}
+
+.header .flex .logo .logo-seal-frame {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.048em;
+  width: 88%;
+  height: 88%;
+  border: 0.035em solid rgba(255, 255, 255, 0.9);
+}
+
+/* The seal descriptor only resolves above roughly 90px, so at header scale
+   the seal is left as a single ink plate on purpose. */
+.header .flex .logo .logo-seal-text {
+  display: none;
+  font-family: "Russo One", sans-serif;
+  font-size: 0.097em;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  color: var(--white);
+}
+
+/* Below this the lockup would push the nav onto a second row. */
+@media (max-width: 1100px) {
+  .header .flex .logo {
+    font-size: 2.6rem;
+  }
+}
+
+.header .flex .navbar ul {
+  list-style: none;
+}
+
+.header .flex .navbar ul li {
+  float: left;
+  position: relative;
+}
+
+.header .flex .navbar ul li a {
+  font-size: 20px;
+  padding: 10px 15px;
+  display: block;
+  color: var(--light-color);
+}
+
+.header .flex .navbar ul li a:hover {
+  background-color: var(--brown);
+  color: var(--white);
+  border-radius: 7px
+}
+
+.header .flex .navbar ul li ul {
+  position: absolute;
+  left: 0;
+  width: 150px;
+  background-color: var(--white);
+  animation: fadeIn 0.2s linear;
+  display: none;
+  border-radius: 10px 10px 10px 10px;
+}
+
+.header .flex .navbar ul li ul li {
+  width: 100%;
+}
+
+.header .flex .navbar ul li:hover ul {
+  display: inline-block;
+}
+
+.header .flex .icons > * {
+  font-size: 25px;
+  margin-left: 15px;
+  color: var(--black);
+  cursor: pointer;
+}
+
+.header .flex .icons > *:hover {
+  color: var(--brown);
+}
+
+.header .flex .icons span {
+  font-size: 2rem;
+}
+
+#menu-btn {
+  display: none;
+}
+
+.header .flex .account-box {
+  position: absolute;
+  top: 110%;
+  right: 2px;
+  background-color: var(--white);
+  text-align: center;
+  box-shadow: var(--box-shadow);
+  padding: 20px;
+  border-radius: 10px;
+  width: 350px;
+  display: none;
+  animation: fadeIn 0.2s linear;
+}
+
+.header .flex .account-box.active {
+  display: block;
+}
+
+.header .flex .account-box p {
+  padding-bottom: 10px;
+  font-size: 20px;
+  color: var(--light-color);
+  line-height: 1.5;
+}
+
+.header .flex .account-box p span {
+  color: green;
+  font-weight: bold;
+}
+
+.header .flex .account-box .delete-btn {
+  margin-top: 5px;
+}
+
+@media (max-width: 768px) {
+  #menu-btn {
+    display: inline-block;
+  }
+
+  .header .flex {
+    padding: 2rem;
+  }
+
+  .header .flex .navbar {
+    position: absolute;
+    top: 99%;
+    left: 0;
+    right: 0;
+    background-color: var(--white);
+    border-top: var(--border);
+    border-bottom: var(--border);
+    clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
+  }
+
+  .header .flex .navbar.active {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  }
+
+  .header .flex .navbar ul li {
+    width: 100%;
+    padding: 0.5rem;
+  }
+
+  .header .flex .navbar ul li ul {
+    position: static;
+    width: 100%;
+    animation: none;
+    background-color: var(--light-bg);
+  }
+
+  .header .flex .navbar ul li ul li {
+    padding-left: 2rem;
+  }
+
+}
+
+/* Trạng thái do js/script.js bật/tắt cho menu và tài khoản. */
+.active {
+  background-color: #717171;
+}

@@ -27,6 +27,8 @@ $message = array_merge($message ?? [], handle_product_action($conn, (int) $user_
    <title>Chi tiết sách | BookStory</title>
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
    <link rel="stylesheet" href="../css/style.css">
+   <link rel="stylesheet" href="../css/components/header.css">
+   <link rel="stylesheet" href="../css/components/footer.css">
    <!-- CSS riêng trang chi tiết, không sửa cấu trúc header/footer. -->
    <link rel="stylesheet" href="../css/pages/view-page.css">
 </head>
