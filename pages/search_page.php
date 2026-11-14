@@ -1,9 +1,17 @@
 <?php
-@include '../config/config.php';
+if (file_exists(__DIR__ . '/../config/config.php')) {
+    require __DIR__ . '/../config/config.php';
+} else {
+    die('Không tìm thấy tệp cấu hình cơ sở dữ liệu.');
+}
+
+if (!isset($conn) || !$conn) {
+    die('Biến kết nối cơ sở dữ liệu chưa được khởi tạo.');
+}
 
 session_start();
 
-$user_id = $_SESSION['user_id'];
+$user_id = $_SESSION['user_id'] ?? null;
 
 if(!isset($user_id)){
    header('location:../pages/login.php');
@@ -107,7 +115,7 @@ if(isset($_POST['add_to_cart'])){
          </div>
       </form>
       <?php
-         }
+            }
             }else{
                 echo '<p class="empty">Không tìm thấy kết quả!</p>';
             }
