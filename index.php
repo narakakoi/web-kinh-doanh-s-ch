@@ -18,7 +18,11 @@ if (!isset($user_id)) {
 $message = [];
 
 require_once __DIR__ . '/config/product_actions.php';
-$message = array_merge($message ?? [], handle_product_action($conn, (int) $user_id, $_POST));
+$actionHandler = 'handle_product_action';
+$actionMessages = is_callable($actionHandler)
+   ? $actionHandler($conn, (int) $user_id, $_POST)
+   : [];
+$message = array_merge($message ?? [], $actionMessages);
 
 // BOOKSTORY / TRANG CHỦ: chỉ hiển thị voucher còn hiệu lực.
 // Cùng điều kiện lọc với checkout.php; nếu bảng chưa được cài, trang vẫn hoạt động.
