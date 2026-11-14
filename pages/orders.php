@@ -1,23 +1,28 @@
 <?php
+/**
+ * BOOKSTORY - ĐƠN HÀNG CỦA BẠN
+ * Giao diện mới sử dụng css/pages/commerce.css và css/pages/orders.css.
+ * Nghiệp vụ giữ nguyên: chỉ xem đơn của tài khoản, xóa đơn pending bằng POST + CSRF.
+ */
 @include '../config/config.php';
 require_once '../config/order_items.php';
 
 session_start();
+$user_id = (int) ($_SESSION['user_id'] ?? 0);
 
-$user_id = $_SESSION['user_id'] ?? null;
-
-if($user_id === null){
-   header('location:../pages/login.php');
-   exit();
+if ($user_id <= 0) {
+    header('Location: login.php');
+    exit();
 }
 
+// 01. Token CSRF riêng cho thao tác xóa đơn hàng.
 if (!isset($_SESSION['orders_csrf_token'])) {
     $_SESSION['orders_csrf_token'] = bin2hex(random_bytes(32));
 }
-
 $order_message = $_SESSION['orders_message'] ?? '';
 unset($_SESSION['orders_message']);
 
+// 02. Giữ nguyên quy tắc cũ: chỉ xóa đơn pending thuộc đúng người đăng nhập.
 if (isset($_POST['delete_order'])) {
     $order_id = filter_input(INPUT_POST, 'order_id', FILTER_VALIDATE_INT);
     $csrf_token = (string) ($_POST['csrf_token'] ?? '');
@@ -43,120 +48,213 @@ if (isset($_POST['delete_order'])) {
     exit();
 }
 
-// Bảng giá hiện tại của sách, dùng để tính đơn giá và thành tiền từng cuốn
-// trong đơn hàng đã đặt (đơn hàng chỉ lưu tên sách kèm số lượng).
+// 03. Đọc dữ liệu đơn hàng bằng truy vấn tham số, đúng phạm vi tài khoản.
+$order_stmt = mysqli_prepare($conn, 'SELECT * FROM `orders` WHERE user_id = ? ORDER BY id DESC');
+mysqli_stmt_bind_param($order_stmt, 'i', $user_id);
+mysqli_stmt_execute($order_stmt);
+$orders = mysqli_fetch_all(mysqli_stmt_get_result($order_stmt), MYSQLI_ASSOC);
+mysqli_stmt_close($order_stmt);
+
+// Giá sách hiện tại chỉ dùng để trình bày đơn giá/thành tiền từng dòng.
+// Tổng thanh toán luôn lấy từ orders.total_price đã lưu tại thời điểm đặt hàng.
 $book_prices = [];
-$price_query = mysqli_query($conn, "SELECT `name`, `price` FROM `products`");
-if($price_query){
-    while($price_row = mysqli_fetch_assoc($price_query)){
+$price_query = mysqli_query($conn, 'SELECT `name`, `price` FROM `products`');
+if ($price_query) {
+    while ($price_row = mysqli_fetch_assoc($price_query)) {
         $book_prices[$price_row['name']] = (float) $price_row['price'];
     }
 }
 
-?>
+// 04. Các helper giao diện: escape HTML, định dạng tiền và trạng thái.
+$e = static fn($value): string => htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
+$money = static fn($value): string => number_format((float) $value, 0, ',', '.') . ' VNĐ';
+$status_info = static function ($value): array {
+    switch (strtolower(trim((string) $value))) {
+        case 'pending':
+            return ['Chờ thanh toán', 'pending', 'fa-clock'];
+        case 'paid':
+        case 'completed':
+        case 'success':
+            return ['Đã thanh toán', 'paid', 'fa-check-circle'];
+        case 'failed':
+            return ['Thanh toán thất bại', 'failed', 'fa-exclamation-circle'];
+        case 'cancelled':
+        case 'canceled':
+            return ['Đã hủy', 'cancelled', 'fa-times-circle'];
+        default:
+            return ['Đang xử lý', 'other', 'fa-circle-info'];
+    }
+};
+$payment_name = static function ($value): string {
+    $normalized = strtolower(trim((string) $value));
+    if (in_array($normalized, ['cash on delivery', 'cod'], true)) {
+        return 'Thanh toán khi nhận hàng (COD)';
+    }
+    if (strpos($normalized, 'sepay') !== false) {
+        return 'Chuyển khoản qua SePay';
+    }
+    return (string) $value;
+};
 
+$order_count = count($orders);
+$pending_count = 0;
+$paid_count = 0;
+foreach ($orders as $order) {
+    $status = strtolower(trim((string) ($order['payment_status'] ?? '')));
+    if ($status === 'pending') {
+        $pending_count++;
+    }
+    if (in_array($status, ['paid', 'completed', 'success'], true)) {
+        $paid_count++;
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-   <meta charset="UTF-8">
-   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>Đơn Hàng</title>
-   <!-- liên kết font awesome cdn -->
-   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-   <!-- liên kết file css tùy chỉnh -->
-   <link rel="stylesheet" href="../css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đơn hàng của bạn | BookStory</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <!-- CSS dùng chung cho các trang mua sắm; CSS orders tách riêng để không làm rối style.css. -->
+    <link rel="stylesheet" href="../css/pages/commerce.css">
+    <link rel="stylesheet" href="../css/pages/orders.css">
 </head>
 <body>
-   
-<?php @include '../components/header.php'; ?>
+<?php include '../components/header.php'; ?>
 
-<section class="heading">
-    <h3>đơn hàng của bạn</h3>
-    <p> <a href="index.php">Trang chủ</a> / Đơn hàng </p>
-</section>
+<main class="bs-commerce bs-orders">
+    <div class="bs-wrap">
+        <!-- 05. Điều hướng và tiêu đề trang -->
+        <nav class="bs-crumb" aria-label="Đường dẫn">
+            <a href="../index.php">Trang chủ</a>
+            <i class="fas fa-chevron-right" aria-hidden="true"></i>
+            <span>Đơn hàng của bạn</span>
+        </nav>
 
-<section class="placed-orders">
-    <h1 class="title">Đơn hàng đã đặt</h1>
-    <?php if ($order_message !== ''): ?>
-        <p class="message"><?php echo htmlspecialchars($order_message, ENT_QUOTES, 'UTF-8'); ?></p>
-    <?php endif; ?>
-    <div class="box-container">
-    <?php
-        $select_orders = mysqli_query($conn, "SELECT * FROM `orders` WHERE user_id = '$user_id'") or die('Lỗi truy vấn');
-        if(mysqli_num_rows($select_orders) > 0){
-            while($fetch_orders = mysqli_fetch_assoc($select_orders)){
-    ?>
-    <div class="box">
-        <p> Ngày đặt hàng : <span><?php echo $fetch_orders['placed_on']; ?></span> </p>
-        <p> Tên : <span><?php echo $fetch_orders['name']; ?></span> </p>
-        <p> Số điện thoại : <span><?php echo $fetch_orders['number']; ?></span> </p>
-        <p> Email : <span><?php echo $fetch_orders['email']; ?></span> </p>
-        <p> Địa chỉ : <span><?php echo $fetch_orders['address']; ?></span> </p>
-        <p> Phương thức thanh toán : <span><?php echo $fetch_orders['method']; ?></span> </p>
-        <?php $order_items = parse_order_items($fetch_orders['total_products']); ?>
-        <?php if(!empty($order_items)){ ?>
-        <div class="order-items">
-            <p class="order-items-title">Sách đã đặt</p>
-            <div class="order-item order-item-head">
-                <span>Tên sách</span>
-                <span>SL</span>
-                <span>Đơn giá</span>
-                <span>Thành tiền</span>
+        <div class="bs-page-intro">
+            <div>
+                <span class="bs-eyebrow"><i class="fas fa-book-open" aria-hidden="true"></i> BOOKSTORY · THEO DÕI ĐƠN</span>
+                <h1>Đơn hàng của bạn</h1>
+                <p>Xem lại sách đã mua, theo dõi thanh toán và quản lý đơn hàng tại một nơi.</p>
             </div>
-            <?php
-                foreach($order_items as $item){
-                    $unit_price = isset($book_prices[$item['name']]) ? $book_prices[$item['name']] : null;
-                    $line_price = $unit_price !== null ? $unit_price * $item['qty'] : null;
-            ?>
-            <div class="order-item">
-                <span class="item-name"><?php echo htmlspecialchars($item['name'], ENT_QUOTES, 'UTF-8'); ?></span>
-                <span class="item-qty"><?php echo $item['qty']; ?></span>
-                <span class="item-unit"><?php echo $unit_price === null ? '—' : number_format($unit_price, 0, ',', '.') . ' VNĐ'; ?></span>
-                <span class="item-line"><?php echo $line_price === null ? '—' : number_format($line_price, 0, ',', '.') . ' VNĐ'; ?></span>
+            <div class="bs-hero-badge" aria-label="Tổng số đơn hàng">
+                <i class="fas fa-box-open" aria-hidden="true"></i>
+                <div><strong><?= $order_count ?> đơn hàng</strong><small>Lịch sử mua sách</small></div>
             </div>
-            <?php } ?>
-            <div class="order-item-total">
-                <span>Tổng giá</span>
-                <span><?php echo number_format($fetch_orders['total_price'], 0, ',', '.'); ?> VNĐ</span>
-            </div>
-            <?php if ((float) ($fetch_orders['discount_amount'] ?? 0) > 0): ?>
-                <p>Mã giảm giá <span><?php echo htmlspecialchars($fetch_orders['coupon_code'], ENT_QUOTES, 'UTF-8'); ?> - giảm <?php echo number_format((float) $fetch_orders['discount_amount'], 0, ',', '.'); ?> VNĐ</span></p>
-            <?php endif; ?>
         </div>
-        <?php }else{ ?>
-        <p> Sản phẩm của bạn : <span><?php echo htmlspecialchars($fetch_orders['total_products'], ENT_QUOTES, 'UTF-8'); ?></span> </p>
-        <p> Tổng giá: <span><?php echo number_format($fetch_orders['total_price'], 0, ',', '.'); ?> VNĐ</span></p>
-        <?php } ?>
-        <p> Tình trạng thanh toán : <span style="color:<?php if($fetch_orders['payment_status'] == 'pending'){echo 'tomato'; }else{echo 'green';} ?>"><?php echo $fetch_orders['payment_status']; ?></span> </p>
-        <?php if ($fetch_orders['payment_status'] === 'pending'): ?>
-            <div class="order-actions">
-                <a href="checkout.php?order_id=<?php echo (int) $fetch_orders['id']; ?>" class="btn">
-                    <i class="fas fa-credit-card"></i> Xem chi tiết / Thanh toán
-                </a>
-                <form action="orders.php" method="post" onsubmit="return confirm('Bạn có chắc muốn xóa đơn hàng này?');">
-                    <input type="hidden" name="order_id" value="<?php echo (int) $fetch_orders['id']; ?>">
-                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['orders_csrf_token'], ENT_QUOTES, 'UTF-8'); ?>">
-                    <button type="submit" name="delete_order" class="delete-btn">
-                        <i class="fas fa-trash"></i> Xóa đơn hàng
-                    </button>
-                </form>
-            </div>
+
+        <?php if ($order_message !== ''): ?>
+            <div class="bs-alert" role="status"><?= $e($order_message) ?></div>
         <?php endif; ?>
-    </div>
-    <?php
-        }
-    }else{
-        echo '<p class="empty">Bạn chưa có đơn hàng nào!</p>';
-    }
-    
-    ?>
-    </div>
 
-</section>
+        <!-- 06. Tóm tắt giúp xem nhanh tình trạng đơn hàng. -->
+        <section class="bs-orders-overview" aria-label="Tổng quan đơn hàng">
+            <div class="bs-orders-stat"><span class="bs-orders-stat-icon"><i class="fas fa-receipt" aria-hidden="true"></i></span><div><small>Tổng đơn đã đặt</small><strong><?= $order_count ?></strong></div></div>
+            <div class="bs-orders-stat"><span class="bs-orders-stat-icon is-warning"><i class="far fa-clock" aria-hidden="true"></i></span><div><small>Chờ thanh toán</small><strong><?= $pending_count ?></strong></div></div>
+            <div class="bs-orders-stat"><span class="bs-orders-stat-icon is-success"><i class="far fa-check-circle" aria-hidden="true"></i></span><div><small>Đã thanh toán</small><strong><?= $paid_count ?></strong></div></div>
+        </section>
 
-<?php @include '../components/footer.php'; ?>
+        <!-- 07. Danh sách từng đơn; trạng thái và nút thao tác lấy từ dữ liệu thật. -->
+        <section class="bs-orders-list" aria-label="Danh sách đơn hàng">
+            <div class="bs-orders-section-title">
+                <div><span class="bs-eyebrow">LỊCH SỬ MUA SẮM</span><h2>Đơn hàng đã đặt</h2></div>
+                <span class="bs-orders-count"><?= $order_count ?> đơn</span>
+            </div>
+
+            <?php if (!$orders): ?>
+                <div class="bs-panel bs-empty bs-orders-empty">
+                    <i class="fas fa-box-open" aria-hidden="true"></i>
+                    <h2>Bạn chưa có đơn hàng nào</h2>
+                    <p>Khám phá các đầu sách thú vị và bắt đầu đơn hàng đầu tiên của bạn.</p>
+                    <a href="shop.php" class="bs-btn bs-btn-primary"><i class="fas fa-book" aria-hidden="true"></i> Khám phá cửa hàng</a>
+                </div>
+            <?php endif; ?>
+
+            <?php foreach ($orders as $order): ?>
+                <?php
+                    $info = $status_info($order['payment_status'] ?? '');
+                    $items = parse_order_items($order['total_products'] ?? '');
+                    $is_pending = (string) ($order['payment_status'] ?? '') === 'pending';
+                ?>
+                <article class="bs-panel bs-order-card">
+                    <div class="bs-order-head">
+                        <div class="bs-order-identity">
+                            <span class="bs-order-id"><i class="fas fa-receipt" aria-hidden="true"></i> Đơn hàng #<?= (int) $order['id'] ?></span>
+                            <span class="bs-order-date"><i class="far fa-calendar-alt" aria-hidden="true"></i> <?= $e($order['placed_on'] ?? '') ?></span>
+                        </div>
+                        <span class="bs-order-status bs-order-status-<?= $e($info[1]) ?>">
+                            <i class="fas <?= $e($info[2]) ?>" aria-hidden="true"></i> <?= $e($info[0]) ?>
+                        </span>
+                    </div>
+
+                    <div class="bs-order-body">
+                        <!-- Cột trái: thông tin người nhận / thanh toán. -->
+                        <section class="bs-order-info" aria-label="Thông tin giao hàng">
+                            <h3><i class="far fa-address-card" aria-hidden="true"></i> Thông tin nhận hàng</h3>
+                            <dl class="bs-order-details">
+                                <div><dt>Người nhận</dt><dd><?= $e($order['name'] ?? '') ?></dd></div>
+                                <div><dt>Điện thoại</dt><dd><?= $e($order['number'] ?? '') ?></dd></div>
+                                <div><dt>Email</dt><dd class="bs-order-break"><?= $e($order['email'] ?? '') ?></dd></div>
+                                <div><dt>Địa chỉ</dt><dd class="bs-order-break"><?= $e($order['address'] ?? '') ?></dd></div>
+                                <div><dt>Thanh toán</dt><dd><?= $e($payment_name($order['method'] ?? '')) ?></dd></div>
+                            </dl>
+                        </section>
+
+                        <!-- Cột phải: từng đầu sách, số lượng và số tiền. -->
+                        <section class="bs-order-products" aria-label="Danh sách sách đã đặt">
+                            <h3><i class="fas fa-book" aria-hidden="true"></i> Sách trong đơn hàng</h3>
+                            <?php if ($items): ?>
+                                <div class="bs-order-table" role="table" aria-label="Chi tiết sách trong đơn">
+                                    <div class="bs-order-table-row bs-order-table-head" role="row">
+                                        <span role="columnheader">Tên sách</span><span role="columnheader">SL</span><span role="columnheader">Đơn giá</span><span role="columnheader">Thành tiền</span>
+                                    </div>
+                                    <?php foreach ($items as $item): ?>
+                                        <?php
+                                            $unit_price = $book_prices[$item['name']] ?? null;
+                                            $line_price = $unit_price !== null ? $unit_price * (int) $item['qty'] : null;
+                                        ?>
+                                        <div class="bs-order-table-row" role="row">
+                                            <span class="bs-order-book-name" role="cell"><?= $e($item['name']) ?></span>
+                                            <span class="bs-order-qty" role="cell"><?= (int) $item['qty'] ?></span>
+                                            <span class="bs-order-unit" role="cell"><?= $unit_price === null ? '—' : $money($unit_price) ?></span>
+                                            <strong class="bs-order-line" role="cell"><?= $line_price === null ? '—' : $money($line_price) ?></strong>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php else: ?>
+                                <p class="bs-order-fallback"><?= $e($order['total_products'] ?? '') ?></p>
+                            <?php endif; ?>
+                            <?php if ((float) ($order['discount_amount'] ?? 0) > 0): ?>
+                                <div class="bs-order-discount"><i class="fas fa-tag" aria-hidden="true"></i> Mã <?= $e($order['coupon_code'] ?? '') ?>: giảm <?= $money($order['discount_amount']) ?></div>
+                            <?php endif; ?>
+                        </section>
+                    </div>
+
+                    <!-- 08. Tổng đơn lấy từ database; giữ hành động thanh toán và xóa đơn pending. -->
+                    <div class="bs-order-bottom">
+                        <div class="bs-order-total"><span>Tổng thanh toán</span><strong><?= $money($order['total_price'] ?? 0) ?></strong></div>
+                        <?php if ($is_pending): ?>
+                            <div class="bs-order-actions">
+                                <a href="checkout.php?order_id=<?= (int) $order['id'] ?>" class="bs-btn bs-btn-primary"><i class="far fa-credit-card" aria-hidden="true"></i> Xem chi tiết / Thanh toán</a>
+                                <form action="orders.php" method="post" onsubmit="return confirm('Bạn có chắc muốn xóa đơn hàng này?');">
+                                    <input type="hidden" name="order_id" value="<?= (int) $order['id'] ?>">
+                                    <input type="hidden" name="csrf_token" value="<?= $e($_SESSION['orders_csrf_token']) ?>">
+                                    <button type="submit" name="delete_order" value="1" class="bs-btn bs-order-delete"><i class="far fa-trash-alt" aria-hidden="true"></i> Xóa đơn hàng</button>
+                                </form>
+                            </div>
+                        <?php else: ?>
+                            <span class="bs-order-final-note"><i class="fas fa-shield-alt" aria-hidden="true"></i> Đơn hàng đã được ghi nhận</span>
+                        <?php endif; ?>
+                    </div>
+                </article>
+            <?php endforeach; ?>
+        </section>
+    </div>
+</main>
+
+<?php include '../components/footer.php'; ?>
 <script src="../js/script.js"></script>
-
 </body>
 </html>
