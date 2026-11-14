@@ -109,7 +109,7 @@ $money = static fn($value): string => number_format((float) $value, 0, ',', '.')
             <?php foreach ($items as $book): ?>
             <article class="bs-book-card">
                 <div class="bs-book-visual"><span class="bs-book-tag">ĐÃ YÊU THÍCH</span>
-                    <form method="post" class="bs-book-heart" onsubmit="return confirm('Xóa sách khỏi yêu thích?')">
+                    <form method="post" class="bs-book-heart" data-wishlist-confirm="remove" data-book-name="<?= $e($book['name']) ?>" onsubmit="return confirm('Xóa sách khỏi yêu thích?')">
                         <input type="hidden" name="csrf_token" value="<?= $e($_SESSION['wishlist_csrf']) ?>"><input type="hidden" name="action" value="remove"><input type="hidden" name="wishlist_id" value="<?= (int) $book['id'] ?>">
                         <button type="submit" aria-label="Xóa khỏi yêu thích"><i class="fas fa-heart"></i></button>
                     </form>
@@ -123,12 +123,27 @@ $money = static fn($value): string => number_format((float) $value, 0, ',', '.')
             </article>
             <?php endforeach; ?>
         </div>
-        <form method="post" class="bs-wishlist-bottom" onsubmit="return confirm('Xóa tất cả sách yêu thích?')"><input type="hidden" name="csrf_token" value="<?= $e($_SESSION['wishlist_csrf']) ?>"><input type="hidden" name="action" value="clear"><span><i class="fas fa-shield-alt"></i> Sách bạn yêu thích được lưu trong tài khoản của bạn.</span><button class="bs-text-danger" type="submit"><i class="far fa-trash-alt"></i> Xóa tất cả</button></form>
+        <form method="post" class="bs-wishlist-bottom" data-wishlist-confirm="clear" data-book-count="<?= count($items) ?>" onsubmit="return confirm('Xóa tất cả sách yêu thích?')"><input type="hidden" name="csrf_token" value="<?= $e($_SESSION['wishlist_csrf']) ?>"><input type="hidden" name="action" value="clear"><span><i class="fas fa-shield-alt"></i> Sách bạn yêu thích được lưu trong tài khoản của bạn.</span><button class="bs-text-danger" type="submit"><i class="far fa-trash-alt"></i> Xóa tất cả</button></form>
         <?php else: ?>
         <div class="bs-empty"><i class="far fa-heart"></i><h2>Danh sách yêu thích đang trống</h2><p>Hãy khám phá cửa hàng và chọn những cuốn sách bạn thích.</p><a href="shop.php" class="bs-btn bs-btn-primary">Khám phá sách <i class="fas fa-arrow-right"></i></a></div>
         <?php endif; ?>
     </div>
 </main>
+<dialog class="bs-wishlist-confirm" id="wishlist-confirm" aria-labelledby="wishlist-confirm-title" aria-describedby="wishlist-confirm-description">
+    <button type="button" class="bs-confirm-close" data-wishlist-cancel aria-label="Đóng hộp xác nhận">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+    </button>
+    <div class="bs-confirm-symbol" aria-hidden="true">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></svg>
+    </div>
+    <h2 id="wishlist-confirm-title">Xóa khỏi yêu thích?</h2>
+    <p id="wishlist-confirm-description">Bạn muốn bỏ sách này khỏi danh sách yêu thích?</p>
+    <div class="bs-confirm-actions">
+        <button type="button" class="bs-confirm-cancel" data-wishlist-cancel autofocus>Hủy</button>
+        <button type="button" class="bs-confirm-delete" id="wishlist-confirm-delete">Xóa sách</button>
+    </div>
+</dialog>
 <?php include '../components/footer.php'; ?>
 <script src="../js/script.js"></script>
+<script src="../js/wishlist.js"></script>
 </body></html>

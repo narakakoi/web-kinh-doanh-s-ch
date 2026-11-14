@@ -1,6 +1,6 @@
 /* ====================================================================
    BOOKSTORY · WISHLIST — chỉ nạp từ pages/wishlist.php
-   00. Shared storefront shell · 01. Tiêu đề / lưới sách · 02. Thẻ sách · 03. Hành động · 04. Mobile
+   00. Shared storefront shell · 01. Tiêu đề / lưới sách · 02. Thẻ sách · 03. Hành động · 04. Mobile · 05. Xác nhận xóa
    ==================================================================== */
 /* 00. Shared storefront shell: dùng riêng cho trang mua sắm */
 .bs-commerce {
@@ -617,4 +617,109 @@
     width: 100%;
     justify-content: center;
   }
+}
+
+/* 05. Xác nhận xóa: dialog ở top layer, không phụ thuộc font biểu tượng. */
+body.bs-wishlist-confirm-open {
+  overflow: hidden;
+}
+.bs-wishlist-confirm {
+  position: fixed;
+  inset: 0;
+  width: min(440px, calc(100% - 32px));
+  max-height: calc(100vh - 32px);
+  margin: auto;
+  overflow: auto;
+  padding: 32px 28px 28px;
+  border: 1px solid #eadff0;
+  border-radius: 24px;
+  background: #fff;
+  color: #392e49;
+  box-shadow: 0 24px 80px rgba(44, 27, 62, .22);
+  font-size: 14px;
+  line-height: 1.6;
+  text-align: center;
+}
+.bs-wishlist-confirm::backdrop {
+  background: rgba(36, 23, 49, .42);
+  backdrop-filter: blur(3px);
+}
+.bs-wishlist-confirm button {
+  font: inherit;
+  cursor: pointer;
+}
+.bs-wishlist-confirm button:focus-visible {
+  outline: 3px solid #bba0ec;
+  outline-offset: 3px;
+}
+.bs-wishlist-confirm .bs-confirm-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  color: #82718d;
+  background: #f8f4fa;
+}
+.bs-wishlist-confirm .bs-confirm-close:hover {
+  color: #624c76;
+  background: #eee4f4;
+}
+.bs-wishlist-confirm .bs-confirm-symbol {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 18px;
+  border: 1px solid #f1d9e5;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #fff0f6, #f8f1ff);
+  color: #b56487;
+}
+.bs-wishlist-confirm h2 {
+  margin: 0 0 12px;
+  font-size: 23px;
+  line-height: 1.35;
+  font-weight: 800;
+  letter-spacing: -.02em;
+}
+.bs-wishlist-confirm p {
+  margin: 0;
+  color: #81748b;
+  overflow-wrap: anywhere;
+}
+.bs-wishlist-confirm .bs-confirm-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 26px;
+}
+.bs-wishlist-confirm .bs-confirm-actions button {
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  font-weight: 800;
+}
+.bs-wishlist-confirm .bs-confirm-actions .bs-confirm-cancel {
+  border-color: #e7dcef;
+  color: #756182;
+  background: #fff;
+}
+.bs-wishlist-confirm .bs-confirm-cancel:hover {
+  background: #f8f3fc;
+}
+.bs-wishlist-confirm .bs-confirm-delete {
+  background: #ad5479;
+  color: #fff;
+}
+.bs-wishlist-confirm .bs-confirm-delete:hover {
+  background: #934362;
+}
+.bs-wishlist-confirm .bs-confirm-delete:disabled {
+  opacity: .6;
+  cursor: wait;
 }
