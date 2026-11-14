@@ -82,8 +82,7 @@ $money = static fn($value): string => number_format((float) $value, 0, ',', '.')
     <title>Danh sách yêu thích | BookStory</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="../css/style.css">
-    <!-- CSS dùng chung rồi đến CSS riêng: không trộn thêm vào style.css. -->
-    <link rel="stylesheet" href="../css/pages/commerce.css">
+    <!-- CSS tách riêng theo trang để dễ bảo trì và không phụ thuộc file chung. -->
     <link rel="stylesheet" href="../css/pages/wishlist.css">
 </head>
 <body>

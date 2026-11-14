@@ -1,7 +1,7 @@
 <?php
 /**
  * BOOKSTORY - ĐƠN HÀNG CỦA BẠN
- * Giao diện mới sử dụng css/pages/commerce.css và css/pages/orders.css.
+ * Giao diện mới tách CSS theo từng trang: css/pages/orders.css.
  * Nghiệp vụ giữ nguyên: chỉ xem đơn của tài khoản, xóa đơn pending bằng POST + CSRF.
  */
 @include '../config/config.php';
@@ -117,8 +117,7 @@ foreach ($orders as $order) {
     <title>Đơn hàng của bạn | BookStory</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="../css/style.css">
-    <!-- CSS dùng chung cho các trang mua sắm; CSS orders tách riêng để không làm rối style.css. -->
-    <link rel="stylesheet" href="../css/pages/commerce.css">
+    <!-- CSS tách theo trang; mỗi mảng style được đặt trong file riêng để dễ bảo trì. -->
     <link rel="stylesheet" href="../css/pages/orders.css">
 </head>
 <body>

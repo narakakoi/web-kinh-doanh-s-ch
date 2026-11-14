@@ -213,7 +213,7 @@ $isPaymentCompleted = $checkoutOrder && $checkoutOrder['payment_status'] === 'co
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Thanh toán | BookStory</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <link rel="stylesheet" href="../css/style.css"><!-- CSS riêng, phân tách theo trang -->
-<link rel="stylesheet" href="../css/pages/commerce.css"><link rel="stylesheet" href="../css/pages/checkout.css">
+<link rel="stylesheet" href="../css/pages/checkout.css">
 </head><body>
 <?php include '../components/header.php'; ?>
 <main class="bs-commerce bs-checkout"><div class="bs-wrap">

@@ -56,7 +56,7 @@ $money = static fn($value): string => number_format((float) $value, 0, ',', '.')
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <link rel="stylesheet" href="../css/style.css">
 <!-- Tách CSS theo màn hình; style.css vẫn phục vụ header/footer và các trang cũ. -->
-<link rel="stylesheet" href="../css/pages/commerce.css"><link rel="stylesheet" href="../css/pages/cart.css">
+<link rel="stylesheet" href="../css/pages/cart.css">
 </head><body>
 <?php include '../components/header.php'; ?>
 <main class="bs-commerce bs-cart"><div class="bs-wrap">

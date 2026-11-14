@@ -1,7 +1,88 @@
 /* ====================================================================
    BOOKSTORY · WISHLIST — chỉ nạp từ pages/wishlist.php
-   01. Tiêu đề / lưới sách · 02. Thẻ sách · 03. Hành động · 04. Mobile
+   00. Shared storefront shell · 01. Tiêu đề / lưới sách · 02. Thẻ sách · 03. Hành động · 04. Mobile
    ==================================================================== */
+/* 00. Shared storefront shell: dùng riêng cho trang mua sắm */
+.bs-commerce {
+  --bs-purple: #9966e8;
+  --bs-purple-dark: #7248ab;
+  --bs-ink: #332c42;
+  --bs-muted: #81798b;
+  --bs-line: #eee8f2;
+  --bs-soft: #f9f5ff;
+  --bs-danger: #c45173;
+  min-height: 55vh;
+  color: var(--bs-ink);
+  background: #fcfafd;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.bs-commerce .bs-wrap {max-width: 1224px; margin: 0 auto; padding: 35px 24px 57px;}
+.bs-commerce a {color: inherit;}
+.bs-commerce button, .bs-commerce input {font: inherit;}
+.bs-commerce button {cursor: pointer;}
+.bs-commerce button:disabled {opacity: .45; cursor: not-allowed;}
+.bs-commerce :focus-visible {outline: 3px solid #bba0ec; outline-offset: 3px;}
+.bs-commerce .bs-crumb {display:flex; gap:10px; align-items:center; flex-wrap:wrap; font-size:12px; color:#90889c; margin:0 0 23px;}
+.bs-commerce .bs-crumb i {font-size:9px; color:#b2a9bc;}
+.bs-commerce .bs-crumb a:hover {color:var(--bs-purple-dark);}
+.bs-commerce .bs-page-intro {display:flex; align-items:center; justify-content:space-between; gap:24px; margin-bottom:31px;}
+.bs-commerce .bs-eyebrow {display:inline-flex; gap:8px; align-items:center; font-size:11px; font-weight:800; letter-spacing:.15em; text-transform:uppercase; color:var(--bs-purple-dark);}
+.bs-commerce .bs-page-intro h1 {font-size:37px; font-weight:800; line-height:1.2; margin:10px 0; letter-spacing:-.035em; color:#312a42;}
+.bs-commerce .bs-page-intro p {font-size:14px; color:var(--bs-muted);}
+.bs-commerce .bs-hero-badge {display:flex; align-items:center; gap:15px; flex-shrink:0; padding:19px 23px; background:linear-gradient(125deg,#f3eaff,#fff6ec); border:1px solid #eaddf2; border-radius:18px;}
+.bs-commerce .bs-hero-badge > i {display:grid; place-items:center; width:49px; height:49px; border-radius:14px; background:white; font-size:22px; color:var(--bs-purple-dark);}
+.bs-commerce .bs-hero-badge strong, .bs-commerce .bs-hero-badge small {display:block;}
+.bs-commerce .bs-hero-badge strong {font-size:18px; font-weight:800;}
+.bs-commerce .bs-hero-badge small {font-size:12px; color:var(--bs-muted);}
+.bs-commerce .bs-card-kicker {display:block; font-size:10px; letter-spacing:.09em; color:var(--bs-purple-dark); font-weight:800;}
+.bs-commerce .bs-price {color:var(--bs-ink); font-size:18px; font-weight:800;}
+.bs-commerce .bs-btn {display:inline-flex; align-items:center; justify-content:center; gap:9px; min-height:42px; padding:10px 17px; border:1px solid transparent; border-radius:10px; font-size:13px; font-weight:800; text-align:center; transition:.18s ease;}
+.bs-commerce .bs-btn-primary {background:var(--bs-purple); color:#fff; box-shadow:0 5px 14px #9966e826;}
+.bs-commerce .bs-btn-primary:hover {color:#fff; background:var(--bs-purple-dark); transform:translateY(-1px);}
+.bs-commerce .bs-btn-soft {background:white; border-color:#e5dcec; color:#645477;}
+.bs-commerce .bs-btn-soft:hover {border-color:var(--bs-purple); color:var(--bs-purple-dark); background:#fbf8ff;}
+.bs-commerce .bs-btn-block {display:flex; width:100%;}
+.bs-commerce .bs-disabled {pointer-events:none; opacity:.5;}
+.bs-commerce .bs-text-link {font-weight:750; font-size:13px; display:inline-flex; align-items:center; gap:8px; color:var(--bs-purple-dark);}
+.bs-commerce .bs-text-link:hover, .bs-commerce .bs-text-danger:hover {text-decoration:underline;}
+.bs-commerce .bs-text-danger {border:0; padding:7px 0; background:transparent; color:var(--bs-danger); font-size:12px; font-weight:750; display:inline-flex; align-items:center; gap:7px;}
+.bs-commerce section.bs-panel {padding:0;}
+.bs-commerce .bs-panel {min-width:0; background:#fff; border:1px solid var(--bs-line); border-radius:17px; overflow:hidden; box-shadow:0 8px 28px rgba(51,39,91,.04);}
+.bs-commerce .bs-panel-heading {padding:22px 25px 19px; border-bottom:1px solid var(--bs-line); display:flex; justify-content:space-between; gap:14px; align-items:center;}
+.bs-commerce .bs-panel-heading h2 {font-size:18px; font-weight:800; margin:0; color:var(--bs-ink);}
+.bs-commerce .bs-panel-heading small, .bs-commerce .bs-panel-heading h2 small {font-size:12px; font-weight:550; color:#9b93a2;}
+.bs-commerce .bs-panel-foot {padding:18px 25px; display:flex; justify-content:space-between; gap:14px; align-items:center; border-top:1px solid var(--bs-line);}
+.bs-commerce .bs-empty {padding:60px 22px; text-align:center;}
+.bs-commerce .bs-empty > i {display:grid; place-items:center; margin:0 auto 17px; width:78px; height:78px; background:#f4edff; color:var(--bs-purple); border-radius:23px; font-size:30px;}
+.bs-commerce .bs-empty h2 {font-size:20px; font-weight:800; margin:8px 0;}
+.bs-commerce .bs-empty p {color:var(--bs-muted); margin:0 0 20px; font-size:14px;}
+.bs-commerce .bs-alert {margin:0 0 20px; padding:14px 18px; border:1px solid #dfd0f5; border-radius:12px; background:#f5eeff; color:#65458f; font-weight:700;}
+.bs-commerce .bs-steps {display:flex; gap:14px; align-items:center; flex-wrap:wrap; margin:0 0 22px; color:#a4a0ac; font-size:13px; font-weight:750;}
+.bs-commerce .bs-steps span {display:inline-flex; align-items:center; gap:8px;}
+.bs-commerce .bs-steps b {display:grid; place-items:center; width:26px; height:26px; border-radius:50%; background:#ebe7ee; font-size:12px; color:#928a9b;}
+.bs-commerce .bs-steps .bs-step-active {color:var(--bs-purple-dark);}
+.bs-commerce .bs-steps .bs-step-active b {background:var(--bs-purple); color:#fff;}
+.bs-commerce .bs-steps > i {font-size:9px; color:#d9d3df;}
+.bs-commerce .bs-summary-row {display:flex; align-items:center; justify-content:space-between; gap:12px; margin:14px 0; color:var(--bs-muted); font-size:13px;}
+.bs-commerce .bs-summary-row strong {color:var(--bs-ink); font-weight:800;}
+.bs-commerce .bs-summary-total {display:flex; justify-content:space-between; gap:10px; align-items:center; margin:17px 0 22px; font-weight:800;}
+.bs-commerce .bs-summary-total strong {font-size:25px; color:var(--bs-purple-dark); white-space:nowrap;}
+.bs-commerce hr {border:0; border-top:1px solid var(--bs-line); margin:20px 0;}
+.bs-commerce .bs-summary-note {font-size:11px; text-align:center; color:#9990a3; margin:14px 0 0;}
+.bs-commerce .bs-summary-note i {color:var(--bs-purple); margin-right:5px;}
+@media(max-width:760px){
+  .bs-commerce .bs-wrap {padding:26px 16px 40px;}
+  .bs-commerce .bs-page-intro h1 {font-size:30px;}
+  .bs-commerce .bs-hero-badge {display:none;}
+  .bs-commerce .bs-panel-heading {padding:18px;}
+}
+@media(max-width:420px){
+  .bs-commerce .bs-page-intro h1 {font-size:28px;}
+  .bs-commerce .bs-steps {gap:8px; font-size:11px;}
+  .bs-commerce .bs-steps b {width:22px; height:22px; font-size:10px;}
+  .bs-commerce .bs-steps > i {font-size:7px;}
+}
 /* 01. Tiêu đề danh sách */
 .bs-wishlist .bs-section-head {display:flex; justify-content:space-between; align-items:center; gap:12px; margin:0 0 20px;}
 .bs-wishlist .bs-section-head h2 {font-size:19px; font-weight:800;}
