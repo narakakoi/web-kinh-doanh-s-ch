@@ -2,6 +2,7 @@
 require_once '../config/config.php';
 session_start();
 
+/** @var mysqli $conn Connection initialized by config.php. */
 $user_id = $_SESSION['user_id'] ?? null;
 
 if ($user_id === null) {

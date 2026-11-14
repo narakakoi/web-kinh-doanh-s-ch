@@ -16,20 +16,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $action = (string) ($_POST['action'] ?? '');
         $cartId = (int) ($_POST['cart_id'] ?? 0);
         if ($action === 'clear') {
-            $stmt = mysqli_prepare($conn, 'DELETE FROM cart WHERE user_id = ?');
+            $stmt = mysqli_prepare($GLOBALS['conn'], 'DELETE FROM cart WHERE user_id = ?');
             mysqli_stmt_bind_param($stmt, 'i', $user_id);
             mysqli_stmt_execute($stmt);
             mysqli_stmt_close($stmt);
             $_SESSION['cart_notice'] = 'Đã làm trống giỏ hàng.';
         } elseif ($cartId > 0 && $action === 'remove') {
-            $stmt = mysqli_prepare($conn, 'DELETE FROM cart WHERE id = ? AND user_id = ?');
+            $stmt = mysqli_prepare($GLOBALS['conn'], 'DELETE FROM cart WHERE id = ? AND user_id = ?');
             mysqli_stmt_bind_param($stmt, 'ii', $cartId, $user_id);
             mysqli_stmt_execute($stmt);
             mysqli_stmt_close($stmt);
             $_SESSION['cart_notice'] = 'Đã xóa sách khỏi giỏ hàng.';
         } elseif ($cartId > 0 && $action === 'change_quantity') {
             $qty = max(1, min(99, (int) ($_POST['cart_quantity'] ?? 1)));
-            $stmt = mysqli_prepare($conn, 'UPDATE cart SET quantity = ? WHERE id = ? AND user_id = ?');
+            $stmt = mysqli_prepare($GLOBALS['conn'], 'UPDATE cart SET quantity = ? WHERE id = ? AND user_id = ?');
             mysqli_stmt_bind_param($stmt, 'iii', $qty, $cartId, $user_id);
             mysqli_stmt_execute($stmt);
             mysqli_stmt_close($stmt);
@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$stmt = mysqli_prepare($conn, 'SELECT id, pid, name, price, quantity, image FROM cart WHERE user_id = ? ORDER BY id DESC');
+$stmt = mysqli_prepare($GLOBALS['conn'], 'SELECT id, pid, name, price, quantity, image FROM cart WHERE user_id = ? ORDER BY id DESC');
 mysqli_stmt_bind_param($stmt, 'i', $user_id);
 mysqli_stmt_execute($stmt);
 $items = mysqli_fetch_all(mysqli_stmt_get_result($stmt), MYSQLI_ASSOC);
