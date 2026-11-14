@@ -91,7 +91,7 @@
   flex-shrink: 0;
   padding: 19px 23px;
   background: linear-gradient(125deg,#f3eaff,#fff6ec);
-  border: 1px solid #eaddf2;
+  border: 1px solid #e9dff0f8;
   border-radius: 18px;
 }
 .bs-commerce .bs-hero-badge > i {
@@ -102,7 +102,7 @@
   border-radius: 14px;
   background: white;
   font-size: 22px;
-  color: var(--bs-purple-dark);
+  color: #fdc2daf3;
 }
 .bs-commerce .bs-hero-badge strong, .bs-commerce .bs-hero-badge small {
   display: block;
@@ -497,7 +497,7 @@
   border-radius: 12px;
   border: 1px solid rgba(216, 190, 235, 0.8);
   background: rgba(255,255,255,.9);
-  color: #d35e87;
+  color: #fdc2da;
   font-size: 15px;
   box-shadow: 0 8px 16px rgba(115,70,130,.08);
   transition: all .2s ease;
