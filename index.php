@@ -59,6 +59,26 @@ if (isset($_POST['add_to_cart'])) {
         $message[] = 'Sản phẩm đã được thêm vào giỏ hàng.';
     }
 }
+// BOOKSTORY / TRANG CHỦ: chỉ hiển thị voucher còn hiệu lực.
+// Cùng điều kiện lọc với checkout.php; nếu bảng chưa được cài, trang vẫn hoạt động.
+$homeCoupons = [];
+try {
+    $couponResult = mysqli_query($conn, "SELECT code, discount_type, discount_value, min_order_value, ends_at
+        FROM coupons
+        WHERE is_active = 1
+          AND (starts_at IS NULL OR starts_at <= NOW())
+          AND (ends_at IS NULL OR ends_at >= NOW())
+          AND (usage_limit IS NULL OR used_count < usage_limit)
+        ORDER BY discount_value DESC, id DESC LIMIT 4");
+    if ($couponResult) {
+        $homeCoupons = mysqli_fetch_all($couponResult, MYSQLI_ASSOC);
+        mysqli_free_result($couponResult);
+    }
+} catch (mysqli_sql_exception $exception) {
+    // Chưa cài bảng coupons thì hiển thị lời nhắc, không dừng cả trang chủ.
+    error_log('BookStory coupons: ' . $exception->getMessage());
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -72,6 +92,8 @@ if (isset($_POST['add_to_cart'])) {
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
    <!-- liên kết file css tùy chỉnh  -->
    <link rel="stylesheet" href="css/style.css">
+   <!-- CSS riêng trang chủ: khu ưu đãi và liên hệ, không đè các màn hình khác. -->
+   <link rel="stylesheet" href="css/pages/home.css">
 </head>
 <body>
    
@@ -139,6 +161,86 @@ if (isset($_POST['add_to_cart'])) {
     showHomeSlides();
     
 </script>
+
+<!-- BOOKSTORY / ƯU ĐÃI: bố cục lấy cảm hứng từ dải Flash Sale.
+     Giá trị, ngày hết hạn và mã đều đọc từ bảng coupons thật. -->
+<section class="bs-home-offers" aria-labelledby="bs-offers-title">
+   <div class="bs-offers-inner">
+      <div class="bs-offers-heading">
+         <div>
+            <span class="bs-offers-tag"><i class="fas fa-bolt" aria-hidden="true"></i> ƯU ĐÃI BOOKSTORY</span>
+            <h2 id="bs-offers-title">Săn mã hay, đọc sách mê say</h2>
+            <p>Chọn ưu đãi phù hợp và dùng mã khi thanh toán đơn sách.</p>
+         </div>
+         <a href="pages/shop.php" class="bs-offers-shop-link">Khám phá cửa hàng <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+      </div>
+      <?php if (!empty($homeCoupons)): ?>
+         <div class="bs-offers-grid">
+            <?php foreach ($homeCoupons as $coupon): ?>
+               <?php
+                  $isPercent = $coupon['discount_type'] === 'percent';
+                  $couponValue = $isPercent
+                      ? number_format((float) $coupon['discount_value'], 0, ',', '.') . '%'
+                      : number_format((float) $coupon['discount_value'], 0, ',', '.') . 'đ';
+                  $safeCode = htmlspecialchars((string) $coupon['code'], ENT_QUOTES, 'UTF-8');
+                  $minValue = (float) $coupon['min_order_value'];
+               ?>
+               <article class="bs-offer-card">
+                  <div class="bs-offer-card-top">
+                     <span class="bs-offer-icon"><i class="fas fa-ticket-alt" aria-hidden="true"></i></span>
+                     <span class="bs-offer-type">MÃ GIẢM GIÁ</span>
+                  </div>
+                  <p class="bs-offer-value">Giảm <strong><?= htmlspecialchars($couponValue, ENT_QUOTES, 'UTF-8') ?></strong></p>
+                  <p class="bs-offer-minimum">
+                     <?= $minValue > 0 ? 'Đơn từ ' . number_format($minValue, 0, ',', '.') . 'đ' : 'Áp dụng cho mọi giá trị đơn' ?>
+                  </p>
+                  <?php if (!empty($coupon['ends_at'])): ?>
+                     <p class="bs-offer-expiry"><i class="far fa-clock" aria-hidden="true"></i> Đến <?= htmlspecialchars(date('d/m/Y', strtotime($coupon['ends_at'])), ENT_QUOTES, 'UTF-8') ?></p>
+                  <?php else: ?>
+                     <p class="bs-offer-expiry"><i class="fas fa-check-circle" aria-hidden="true"></i> Đang áp dụng</p>
+                  <?php endif; ?>
+                  <div class="bs-offer-code-row">
+                     <code><?= $safeCode ?></code>
+                     <button type="button" class="bs-copy-coupon" data-code="<?= $safeCode ?>" aria-label="Sao chép mã <?= $safeCode ?>">Sao chép</button>
+                  </div>
+               </article>
+            <?php endforeach; ?>
+         </div>
+      <?php else: ?>
+         <div class="bs-offers-empty">
+            <i class="fas fa-gift" aria-hidden="true"></i>
+            <div><strong>Chưa có mã giảm giá đang áp dụng</strong><span>Khi cửa hàng phát hành voucher mới, mã sẽ xuất hiện tại đây.</span></div>
+            <a href="pages/shop.php">Xem sách ngay</a>
+         </div>
+      <?php endif; ?>
+   </div>
+</section>
+<script>
+// Chỉ sao chép mã cho người dùng, áp dụng/kiểm tra giá vẫn do checkout.php xử lý.
+document.querySelectorAll('.bs-copy-coupon').forEach(function (button) {
+   button.addEventListener('click', async function () {
+      var code = button.getAttribute('data-code') || '';
+      try {
+         if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(code);
+         } else {
+            var field = document.createElement('textarea');
+            field.value = code; field.style.position = 'fixed'; field.style.opacity = '0';
+            document.body.appendChild(field); field.select();
+            if (!document.execCommand('copy')) throw new Error('copy not supported');
+            field.remove();
+         }
+         button.textContent = 'Đã chép!';
+         button.classList.add('bs-copied');
+         window.setTimeout(function () {button.textContent = 'Sao chép'; button.classList.remove('bs-copied');}, 2200);
+      } catch (error) {
+         button.textContent = 'Chọn mã để chép';
+         window.setTimeout(function () {button.textContent = 'Sao chép';}, 2200);
+      }
+   });
+});
+</script>
+
 <!-- section 1-->
 <section class="products">
    <h1 class="title">Sản phẩm mới nhất</h1>
@@ -233,13 +335,15 @@ if (isset($_POST['add_to_cart'])) {
    
 </section>
 
-<section class="home-contact">
+<!-- BOOKSTORY / LIÊN HỆ NHANH: lời mời ngắn gọn, không dùng icon trang trí. -->
+<section class="home-contact" aria-labelledby="home-contact-title">
    <div class="content">
-      <h3>Bạn có câu hỏi nào không?</h3>
-      <p>Chúng tôi cảm ơn bạn vì đã quan tâm đến các sản phẩm. Bạn có thể gửi ý kiến của mình cho chúng tôi nếu cần sự hỗ trợ.</p>
-      <a href="pages/contact.php" class="btn">Liên hệ với chúng tôi</a>
+      <div class="bs-home-contact-copy">
+         <h3 id="home-contact-title">Bạn có câu hỏi nào không?</h3>
+         <p>Nếu cần tư vấn chọn sách hoặc hỗ trợ đơn hàng, bạn có thể nhắn cho BookStory bất cứ lúc nào.</p>
+      </div>
+      <a href="pages/contact.php" class="btn">Gửi lời nhắn</a>
    </div>
-
 </section>
 
 <?php @include 'components/footer.php'; ?>
