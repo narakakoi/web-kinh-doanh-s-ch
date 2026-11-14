@@ -15,46 +15,9 @@ if ($user_id <= 0) {
    exit();
 }
 
-if (isset($_POST['add_to_wishlist'])) {
-    $product_id = (int) ($_POST['product_id'] ?? 0);
-    $product_name = mysqli_real_escape_string($conn, trim((string) ($_POST['product_name'] ?? '')));
-    $product_price = (float) ($_POST['product_price'] ?? 0);
-    $product_image = mysqli_real_escape_string($conn, trim((string) ($_POST['product_image'] ?? '')));
+require_once __DIR__ . '/../config/product_actions.php';
+$message = array_merge($message ?? [], handle_product_action($conn, (int) $user_id, $_POST));
 
-    $check_wishlist_numbers = mysqli_query($conn, "SELECT * FROM `wishlist` WHERE name = '$product_name' AND user_id = '$user_id'") or die('Lỗi truy vấn');
-
-    $check_cart_numbers = mysqli_query($conn, "SELECT * FROM `cart` WHERE name = '$product_name' AND user_id = '$user_id'") or die('Lỗi truy vấn');
-
-    if (mysqli_num_rows($check_wishlist_numbers) > 0) {
-        $message[] = 'Sản phẩm đã có trong danh sách yêu thích';
-    } elseif (mysqli_num_rows($check_cart_numbers) > 0) {
-        $message[] = 'Sản phẩm đã có trong giỏ hàng';
-    } else {
-        mysqli_query($conn, "INSERT INTO `wishlist`(user_id, pid, name, price, image) VALUES('$user_id', '$product_id', '$product_name', '$product_price', '$product_image')") or die('Lỗi truy vấn');
-        $message[] = 'Sản phẩm đã được thêm vào danh sách yêu thích';
-    }
-}
-
-if (isset($_POST['add_to_cart'])) {
-    $product_id = (int) ($_POST['product_id'] ?? 0);
-    $product_name = mysqli_real_escape_string($conn, trim((string) ($_POST['product_name'] ?? '')));
-    $product_price = (float) ($_POST['product_price'] ?? 0);
-    $product_image = mysqli_real_escape_string($conn, trim((string) ($_POST['product_image'] ?? '')));
-    $product_quantity = max(1, (int) ($_POST['product_quantity'] ?? 1));
-
-    $check_cart_numbers = mysqli_query($conn, "SELECT * FROM `cart` WHERE name = '$product_name' AND user_id = '$user_id'") or die('Lỗi truy vấn');
-
-    if (mysqli_num_rows($check_cart_numbers) > 0) {
-        $message[] = 'Sản phẩm đã có trong giỏ hàng';
-    } else {
-        $check_wishlist_numbers = mysqli_query($conn, "SELECT * FROM `wishlist` WHERE name = '$product_name' AND user_id = '$user_id'") or die('Lỗi truy vấn');
-        if (mysqli_num_rows($check_wishlist_numbers) > 0) {
-            mysqli_query($conn, "DELETE FROM `wishlist` WHERE name = '$product_name' AND user_id = '$user_id'") or die('Lỗi truy vấn');
-        }
-        mysqli_query($conn, "INSERT INTO `cart`(user_id, pid, name, price, quantity, image) VALUES('$user_id', '$product_id', '$product_name', '$product_price', '$product_quantity', '$product_image')") or die('Lỗi truy vấn');
-        $message[] = 'Sản phẩm đã được thêm vào giỏ hàng';
-    }
-}
 ?>
 
 <!DOCTYPE html>
@@ -73,10 +36,13 @@ if (isset($_POST['add_to_cart'])) {
 <body>
    
 <?php @include '../components/header.php'; ?>
+<?php foreach ($message as $notice): ?>
+<div class="message" role="status"><span><?= htmlspecialchars($notice, ENT_QUOTES, 'UTF-8') ?></span><i class="fas fa-times" onclick="this.parentElement.remove();"></i></div>
+<?php endforeach; ?>
 
 <section class="heading">
     <h3>Tìm kiếm</h3>
-    <p> <a href="index.php">Trang chủ</a> / Tìm kiếm </p>
+    <p> <a href="../index.php">Trang chủ</a> / Tìm kiếm </p>
 </section>
 
 <section class="search-form">
@@ -88,24 +54,23 @@ if (isset($_POST['add_to_cart'])) {
 <section class="products" style="padding-top: 0;">
    <div class="box-container">
       <?php
-        if(isset($_POST['search_btn'])){
+        if (isset($_POST['search_box']) && is_string($_POST['search_box'])) {
          $search_box = mysqli_real_escape_string($conn, $_POST['search_box']);
          $select_products = mysqli_query($conn, "SELECT * FROM `products` WHERE name LIKE '%{$search_box}%'") or die('Lỗi truy vấn');
          if(mysqli_num_rows($select_products) > 0){
             while($fetch_products = mysqli_fetch_assoc($select_products)){
       ?>
       <form action="" method="POST" class="box">
-         <a href="../view_page.php?pid=<?php echo $fetch_products['id']; ?>" class="fas fa-eye"></a>
+         <a href="view_page.php?pid=<?php echo $fetch_products['id']; ?>" class="fas fa-eye"></a>
          <div class="price"><?php echo number_format($fetch_products['price'], 0, ',', '.'); ?> VNĐ</div>
-         <img src="../uploaded_img/<?php echo $fetch_products['image']; ?>" alt="" class="image">
-         <div class="name"><?php echo $fetch_products['name']; ?></div>
+         <img src="../uploaded_img/<?php echo htmlspecialchars(basename($fetch_products['image']), ENT_QUOTES, 'UTF-8'); ?>" alt="" class="image">
+         <div class="name"><?php echo htmlspecialchars($fetch_products['name'], ENT_QUOTES, 'UTF-8'); ?></div>
          <div class="category"><?php echo htmlspecialchars($fetch_products['category'], ENT_QUOTES, 'UTF-8'); ?></div>
          <div class="box-actions">
-            <input type="number" name="product_quantity" value="1" min="0" class="qty">
+            <input type="number" name="product_quantity" value="1" min="1" max="99" class="qty">
+            <input type="hidden" name="product_csrf" value="<?= htmlspecialchars($_SESSION['product_csrf'], ENT_QUOTES, 'UTF-8') ?>">
+            <input type="hidden" name="search_box" value="<?= htmlspecialchars($_POST['search_box'], ENT_QUOTES, 'UTF-8') ?>">
             <input type="hidden" name="product_id" value="<?php echo $fetch_products['id']; ?>">
-            <input type="hidden" name="product_name" value="<?php echo $fetch_products['name']; ?>">
-            <input type="hidden" name="product_price" value="<?php echo $fetch_products['price']; ?>">
-            <input type="hidden" name="product_image" value="<?php echo $fetch_products['image']; ?>">
             <button type="submit" name="add_to_wishlist" value="1" class="option-btn"><i class="fas fa-heart" aria-hidden="true"></i> Yêu thích</button>
             <input type="submit" value="Thêm vào giỏ hàng" name="add_to_cart" class="btn">
          </div>

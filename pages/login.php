@@ -9,13 +9,24 @@ if (!isset($conn) || !($conn instanceof mysqli)) {
 session_start();
 
 if (isset($_POST['submit'])) {
-   $filter_email = filter_var($_POST['email'] ?? '', FILTER_SANITIZE_STRING);
-   $email = mysqli_real_escape_string($conn, trim((string) $filter_email));
-   $filter_pass = filter_var($_POST['pass'] ?? '', FILTER_SANITIZE_STRING);
-   $pass = mysqli_real_escape_string($conn, md5((string) $filter_pass));
-   $select_users = mysqli_query($conn, "SELECT * FROM `users` WHERE email = '$email' AND password = '$pass'") or die('Lỗi truy vấn');
-   if (mysqli_num_rows($select_users) > 0) {
-      $row = mysqli_fetch_assoc($select_users);
+   $email = trim(is_string($_POST['email'] ?? null) ? $_POST['email'] : '');
+   $password = is_string($_POST['pass'] ?? null) ? $_POST['pass'] : '';
+   $stmt = mysqli_prepare($conn, 'SELECT * FROM users WHERE email = ? LIMIT 1');
+   mysqli_stmt_bind_param($stmt, 's', $email);
+   mysqli_stmt_execute($stmt);
+   $row = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
+   mysqli_stmt_close($stmt);
+   require_once __DIR__ . '/../config/passwords.php';
+   if ($row && verify_account_password($password, $row['password'])) {
+      if (strlen($password) <= 72 && !str_contains($password, "\0") && password_needs_rehash($row['password'], PASSWORD_DEFAULT)) {
+         $hash = password_hash($password, PASSWORD_DEFAULT);
+         $stmt = mysqli_prepare($conn, 'UPDATE users SET password = ? WHERE id = ? AND password = ?');
+         mysqli_stmt_bind_param($stmt, 'sis', $hash, $row['id'], $row['password']);
+         mysqli_stmt_execute($stmt);
+         mysqli_stmt_close($stmt);
+      }
+      session_regenerate_id(true);
+      $_SESSION = [];
       if ($row['user_type'] == 'admin') {
          $_SESSION['admin_name'] = $row['name'];
          $_SESSION['admin_email'] = $row['email'];
@@ -74,5 +85,6 @@ if (isset($message)) {
       <p>Chưa có tài khoản? <a href="register.php">Đăng ký ngay</a></p>
    </form>
 </section>
+<script src="../js/script.js"></script>
 </body>
 </html>

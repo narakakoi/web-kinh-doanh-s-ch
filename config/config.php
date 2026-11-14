@@ -9,16 +9,17 @@ if (is_file($localConfigPath)) {
     }
 }
 
-$dbHost = $localConfig['db_host'] ?? getenv('DB_HOST');
-$dbUser = $localConfig['db_user'] ?? getenv('DB_USER');
-$dbPassword = $localConfig['db_password'] ?? getenv('DB_PASSWORD');
-$dbName = $localConfig['db_name'] ?? getenv('DB_NAME');
+$dbSetting = static function (string $variable, string $key, string $default) use ($localConfig): string {
+    $value = getenv($variable);
+    return $value !== false ? $value : (string) ($localConfig[$key] ?? $default);
+};
+$dbHost = $dbSetting('DB_HOST', 'db_host', 'localhost');
+$dbUser = $dbSetting('DB_USER', 'db_user', 'root');
+$dbPassword = $dbSetting('DB_PASSWORD', 'db_password', '');
+$dbName = $dbSetting('DB_NAME', 'db_name', 'shop_db');
 
-$dbHost = $dbHost === false ? 'localhost' : $dbHost;
-$dbUser = $dbUser === false ? 'root' : $dbUser;
-$dbPassword = $dbPassword === false ? '' : $dbPassword;
-$dbName = $dbName === false ? 'shop_db' : $dbName;
-
+// Keep connection failures consistent across PHP versions (including PHP 8.0).
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 try {
     $conn = mysqli_connect($dbHost, $dbUser, $dbPassword, $dbName);
     mysqli_set_charset($conn, 'utf8mb4');
