@@ -1,15 +1,18 @@
 <?php
-@include '../config/config.php';
+require_once __DIR__ . '/../config/config.php';
+
+if (!isset($conn) || !($conn instanceof mysqli)) {
+    http_response_code(500);
+    exit('Không thể kết nối cơ sở dữ liệu.');
+}
 
 session_start();
 
 if (isset($_POST['submit'])) {
-   // Lọc và làm sạch dữ liệu đầu vào
-   $filter_email = filter_var($_POST['email'], FILTER_SANITIZE_STRING);
-   $email = mysqli_real_escape_string($conn, $filter_email);
-   $filter_pass = filter_var($_POST['pass'], FILTER_SANITIZE_STRING);
-   $pass = mysqli_real_escape_string($conn, md5($filter_pass));
-   // Kiểm tra thông tin người dùng
+   $filter_email = filter_var($_POST['email'] ?? '', FILTER_SANITIZE_STRING);
+   $email = mysqli_real_escape_string($conn, trim((string) $filter_email));
+   $filter_pass = filter_var($_POST['pass'] ?? '', FILTER_SANITIZE_STRING);
+   $pass = mysqli_real_escape_string($conn, md5((string) $filter_pass));
    $select_users = mysqli_query($conn, "SELECT * FROM `users` WHERE email = '$email' AND password = '$pass'") or die('Lỗi truy vấn');
    if (mysqli_num_rows($select_users) > 0) {
       $row = mysqli_fetch_assoc($select_users);

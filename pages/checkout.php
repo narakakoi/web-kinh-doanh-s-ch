@@ -2,6 +2,7 @@
 require_once '../config/config.php';
 session_start();
 
+/** @var mysqli $conn Connection initialized by config.php. */
 $user_id = $_SESSION['user_id'] ?? null;
 
 if ($user_id === null) {
@@ -208,30 +209,19 @@ $isQrPayment = $checkoutOrder && $checkoutOrder['method'] === 'sepay_qr' && $qrU
 $isPaymentCompleted = $checkoutOrder && $checkoutOrder['payment_status'] === 'completed';
 
 ?>
-
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-   <meta charset="UTF-8">
-   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>Thanh toán</title>
-   <!-- Font Awesome CDN Link -->
-   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-   <!-- Custom CSS File Link -->
-   <link rel="stylesheet" href="../css/style.css">
-</head>
-<body>
-   
-<?php @include '../components/header.php'; ?>
-
-<section class="heading">
-    <h3>Thanh toán đơn hàng</h3>
-    <p> <a href="index.php">Trang chủ</a> / Thanh toán </p>
-</section>
-
-<section class="display-order">
+<!doctype html><html lang="vi"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Thanh toán | BookStory</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link rel="stylesheet" href="../css/style.css"><!-- CSS riêng, phân tách theo trang -->
+<link rel="stylesheet" href="../css/pages/checkout.css">
+</head><body>
+<?php include '../components/header.php'; ?>
+<main class="bs-commerce bs-checkout"><div class="bs-wrap">
+    <nav class="bs-crumb" aria-label="Đường dẫn"><a href="../index.php">Trang chủ</a><i class="fas fa-chevron-right"></i><a href="cart.php">Giỏ hàng</a><i class="fas fa-chevron-right"></i><span>Thanh toán</span></nav>
+    <div class="bs-page-intro"><div><span class="bs-eyebrow"><i class="fas fa-lock"></i> Thanh toán an toàn</span><h1><?= $checkoutOrder ? 'Thông tin đơn hàng' : 'Hoàn tất đơn hàng' ?></h1><p><?= $checkoutOrder ? 'Theo dõi trạng thái thanh toán của bạn.' : 'Chỉ một bước nữa là những cuốn sách sẽ đến tay bạn.' ?></p></div></div>
     <?php if ($checkoutOrder): ?>
+    <!-- Sau khi đặt hàng: giữ nguyên logic thanh toán COD/SePay hiện có. -->
+    <section class="bs-payment-result bs-panel">
         <?php if ($isQrPayment): ?>
             <div class="sepay-payment-card <?php echo $isPaymentCompleted ? 'is-completed' : ''; ?>" id="sepay-payment-card">
                 <div class="sepay-payment-header">
@@ -275,120 +265,82 @@ $isPaymentCompleted = $checkoutOrder && $checkoutOrder['payment_status'] === 'co
                 <p>Đơn hàng đã được tạo. Chúng tôi sẽ xử lý theo phương thức thanh toán đã chọn.</p>
             </div>
         <?php endif; ?>
+
+    </section>
+    <a href="orders.php" class="bs-btn bs-btn-soft">Xem danh sách đơn hàng <i class="fas fa-arrow-right"></i></a>
     <?php else: ?>
     <?php
-        $grand_total = 0;
-        $cart_display_stmt = mysqli_prepare($conn, 'SELECT * FROM `cart` WHERE user_id = ?');
-        mysqli_stmt_bind_param($cart_display_stmt, 'i', $user_id);
-        mysqli_stmt_execute($cart_display_stmt);
-        $select_cart = mysqli_stmt_get_result($cart_display_stmt);
-        if(mysqli_num_rows($select_cart) > 0){
-            while($fetch_cart = mysqli_fetch_assoc($select_cart)){
-            $total_price = ($fetch_cart['price'] * $fetch_cart['quantity']);
-            $grand_total += $total_price;
-    ?>    
-<p> <?php echo $fetch_cart['name']; ?> <span>[<?php echo number_format($fetch_cart['price'], 0, ',', '.'); ?> VNĐ x <?php echo $fetch_cart['quantity']; ?>]</span> </p>
-<?php
-        }
-        }else{
-            echo '<p class="empty">Giỏ hàng của bạn đang trống</p>';
-        }
-        mysqli_stmt_close($cart_display_stmt);
+    // Tóm tắt giỏ hàng được tính từ MySQL, không tin dữ liệu giá gửi từ trình duyệt.
+    $stmt = mysqli_prepare($conn, 'SELECT pid, name, price, quantity, image FROM cart WHERE user_id = ?');
+    mysqli_stmt_bind_param($stmt, 'i', $user_id);
+    mysqli_stmt_execute($stmt);
+    $checkoutItems = mysqli_fetch_all(mysqli_stmt_get_result($stmt), MYSQLI_ASSOC);
+    mysqli_stmt_close($stmt);
+    $grand_total = 0.0;
+    $quantityTotal = 0;
+    foreach ($checkoutItems as $book) { $grand_total += (float) $book['price'] * (int) $book['quantity']; $quantityTotal += (int) $book['quantity']; }
+    $activeCoupon = null;
+    $discountAmount = 0.0;
+    if (!empty($_SESSION['checkout_coupon'])) {
+        [$activeCoupon, $discountAmount] = $findCoupon($conn, $_SESSION['checkout_coupon'], $grand_total);
+        if ($activeCoupon === null) { unset($_SESSION['checkout_coupon']); }
+    }
+    $checkoutTotal = max(0, $grand_total - $discountAmount);
+    $escape = static fn($value): string => htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
+    $formatPrice = static fn($value): string => number_format((float) $value, 0, ',', '.') . ' đ';
     ?>
-    <?php
-        $activeCoupon = null;
-        $discountAmount = 0.0;
-        if (!empty($_SESSION['checkout_coupon'])) {
-            [$activeCoupon, $discountAmount, $activeCouponError] = $findCoupon($conn, $_SESSION['checkout_coupon'], $grand_total);
-            if ($activeCoupon === null) {
-                unset($_SESSION['checkout_coupon']);
-            }
-        }
-        $checkoutTotal = max(0, $grand_total - $discountAmount);
-    ?>
-    <div class="coupon-box">
-        <form action="" method="post">
-            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['checkout_csrf_token'], ENT_QUOTES, 'UTF-8'); ?>">
-            <input type="text" name="coupon_code" value="<?php echo htmlspecialchars($_SESSION['checkout_coupon'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" placeholder="Nhập mã giảm giá">
-            <button type="submit" name="apply_coupon" class="option-btn">Áp dụng</button>
-            <?php if ($activeCoupon): ?>
-                <button type="submit" name="remove_coupon" class="delete-btn">Bỏ mã</button>
-            <?php endif; ?>
+    <?php foreach ($message as $item): ?><div class="bs-alert" role="status"><?= $escape($item) ?></div><?php endforeach; ?>
+    <div class="bs-steps"><span><b>1</b> Giỏ hàng</span><i class="fas fa-minus"></i><span class="bs-step-active"><b>2</b> Thanh toán</span><i class="fas fa-minus"></i><span><b>3</b> Hoàn tất</span></div>
+    <div class="bs-checkout-layout">
+      <section class="bs-panel bs-checkout-form">
+        <div class="bs-panel-heading"><h2>Thông tin thanh toán</h2><small>Các ô có dấu * là bắt buộc</small></div>
+        <!-- FORM đặt hàng dùng đúng tên trường mà PHP phía trên đang xử lý. -->
+        <form method="post" action="">
+          <input type="hidden" name="csrf_token" value="<?= $escape($_SESSION['checkout_csrf_token']) ?>">
+          <div class="bs-form-section"><div class="bs-form-title"><i class="far fa-user"></i><h3>Thông tin người nhận</h3></div><div class="bs-form-grid">
+            <label><span>Họ và tên <em>*</em></span><input name="name" required autocomplete="name" value="<?= $escape($_POST['name'] ?? '') ?>" placeholder="Nguyễn Văn A"></label>
+            <label><span>Số điện thoại <em>*</em></span><input type="tel" name="number" required autocomplete="tel" value="<?= $escape($_POST['number'] ?? '') ?>" placeholder="09xx xxx xxx"></label>
+            <label class="bs-field-wide"><span>Email <em>*</em></span><input type="email" name="email" required autocomplete="email" value="<?= $escape($_POST['email'] ?? '') ?>" placeholder="email@example.com"></label>
+          </div></div>
+          <div class="bs-form-section"><div class="bs-form-title"><i class="fas fa-map-marker-alt"></i><h3>Địa chỉ nhận hàng</h3></div><div class="bs-form-grid">
+            <label><span>Số nhà <em>*</em></span><input name="flat" required value="<?= $escape($_POST['flat'] ?? '') ?>" placeholder="Số 12/5"></label>
+            <label><span>Tên đường <em>*</em></span><input name="street" required value="<?= $escape($_POST['street'] ?? '') ?>" placeholder="Đường Nguyễn Trãi"></label>
+            <label><span>Thành phố <em>*</em></span><input name="city" required value="<?= $escape($_POST['city'] ?? '') ?>" placeholder="TP. Hồ Chí Minh"></label>
+            <label><span>Quận / Huyện <em>*</em></span><input name="state" required value="<?= $escape($_POST['state'] ?? '') ?>" placeholder="Quận 5"></label>
+            <label><span>Quốc gia <em>*</em></span><input name="country" required value="<?= $escape($_POST['country'] ?? 'Việt Nam') ?>" placeholder="Việt Nam"></label>
+            <label><span>Mã bưu điện <em>*</em></span><input name="pin_code" required inputmode="numeric" value="<?= $escape($_POST['pin_code'] ?? '') ?>" placeholder="700000"></label>
+          </div></div>
+          <div class="bs-form-section"><div class="bs-form-title"><i class="far fa-credit-card"></i><h3>Phương thức thanh toán</h3></div><div class="bs-payment-options">
+             <label class="bs-payment-choice"><input type="radio" name="method" value="cash on delivery" <?= ($_POST['method'] ?? 'cash on delivery') === 'cash on delivery' ? 'checked' : '' ?>><span><strong>Thanh toán khi nhận hàng</strong><small>Thanh toán tiền mặt khi nhận sách (COD)</small></span></label>
+             <?php if ($sepayConfigured): ?><label class="bs-payment-choice"><input type="radio" name="method" value="sepay_qr" <?= ($_POST['method'] ?? '') === 'sepay_qr' ? 'checked' : '' ?>><span><strong>Chuyển khoản QR · SePay</strong><small>Quét QR qua ứng dụng ngân hàng</small></span></label><?php endif; ?>
+          </div>
+          <?php if (!$sepayConfigured): ?><p class="bs-payment-help"><i class="fas fa-info-circle"></i> QR SePay chưa khả dụng vì máy chủ chưa cấu hình đầy đủ.</p><?php endif; ?>
+          </div>
+          <?php if ($checkoutItems && $grand_total > 0): ?><button type="submit" name="order" value="1" class="bs-btn bs-btn-primary bs-btn-block bs-place-order">Đặt hàng ngay <i class="fas fa-arrow-right"></i></button><?php else: ?><p class="bs-payment-help">Vui lòng thêm sách vào giỏ trước khi đặt hàng.</p><?php endif; ?>
         </form>
-        <?php if ($activeCoupon): ?>
-            <p>Mã <?php echo htmlspecialchars($activeCoupon['code'], ENT_QUOTES, 'UTF-8'); ?>: giảm <?php echo number_format($discountAmount, 0, ',', '.'); ?> VNĐ</p>
-        <?php endif; ?>
+      </section>
+      <aside class="bs-panel bs-checkout-summary">
+         <div class="bs-panel-heading"><h2>Đơn hàng của bạn</h2><small><?= $quantityTotal ?> cuốn sách</small></div>
+         <div class="bs-order-items">
+            <?php foreach ($checkoutItems as $book): ?>
+            <div class="bs-order-item"><img loading="lazy" src="../uploaded_img/<?= $escape(basename((string) $book['image'])) ?>" alt="Bìa sách <?= $escape($book['name']) ?>"><div><strong><?= $escape($book['name']) ?></strong><small>Số lượng: <?= (int) $book['quantity'] ?></small></div><span><?= $formatPrice((float) $book['price'] * (int) $book['quantity']) ?></span></div>
+            <?php endforeach; ?>
+            <?php if (!$checkoutItems): ?><div class="bs-empty"><i class="fas fa-shopping-basket"></i><p>Chưa có sản phẩm nào.</p><a href="shop.php" class="bs-btn bs-btn-soft">Chọn sách</a></div><?php endif; ?>
+         </div>
+         <div class="bs-summary">
+            <h3><i class="fas fa-tag"></i> Mã giảm giá</h3>
+            <!-- Form mã giảm giá độc lập, không lồng trong form đặt hàng. -->
+            <form method="post" class="bs-coupon-form"><input type="hidden" name="csrf_token" value="<?= $escape($_SESSION['checkout_csrf_token']) ?>"><input name="coupon_code" value="<?= $escape($_SESSION['checkout_coupon'] ?? '') ?>" placeholder="Nhập mã giảm giá"><button type="submit" name="apply_coupon" class="bs-btn bs-btn-soft">Áp dụng</button></form>
+            <?php if ($activeCoupon): ?><div class="bs-coupon-success">Mã <?= $escape($activeCoupon['code']) ?> giảm <?= $formatPrice($discountAmount) ?><form method="post"><input type="hidden" name="csrf_token" value="<?= $escape($_SESSION['checkout_csrf_token']) ?>"><button type="submit" name="remove_coupon" class="bs-text-danger">Bỏ mã</button></form></div><?php endif; ?>
+            <div class="bs-summary-row"><span>Tạm tính</span><strong><?= $formatPrice($grand_total) ?></strong></div><div class="bs-summary-row"><span>Giảm giá</span><strong class="bs-discount">− <?= $formatPrice($discountAmount) ?></strong></div><div class="bs-summary-row"><span>Phí vận chuyển</span><span>Chưa tính</span></div><hr><div class="bs-summary-total"><span>Thành tiền</span><strong><?= $formatPrice($checkoutTotal) ?></strong></div>
+            <p class="bs-summary-note"><i class="fas fa-shield-alt"></i> Thông tin được xử lý qua hệ thống BookStory.</p>
+         </div>
+      </aside>
     </div>
-    <div class="grand-total">Tạm tính: <span><?php echo number_format($grand_total, 0, ',', '.'); ?> VNĐ</span></div>
-    <div class="grand-total">Thành tiền: <span><?php echo number_format($checkoutTotal, 0, ',', '.'); ?> VNĐ</span></div>
+    <a href="cart.php" class="bs-back"><i class="fas fa-arrow-left"></i> Quay lại giỏ hàng</a>
     <?php endif; ?>
-</section>
-<?php if (!$checkoutOrder): ?>
-<section class="checkout">
-    <?php foreach ($message as $item): ?>
-        <p class="message"><?php echo htmlspecialchars($item, ENT_QUOTES, 'UTF-8'); ?></p>
-    <?php endforeach; ?>
-    <form action="" method="POST">
-        <h3>Đặt hàng</h3>
-        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['checkout_csrf_token'], ENT_QUOTES, 'UTF-8'); ?>">
-        <div class="flex">
-            <div class="inputBox">
-                <span>Tên của bạn :</span>
-                <input type="text" name="name" placeholder="Nhập tên của bạn" required>
-            </div>
-            <div class="inputBox">
-                <span>Số điện thoại :</span>
-                <input type="number" name="number" min="0" placeholder="Nhập số điện thoại của bạn" required>
-            </div>
-            <div class="inputBox">
-                <span>Email của bạn :</span>
-                <input type="email" name="email" placeholder="Nhập email của bạn" required>
-            </div>
-            <div class="inputBox">
-                <span>Phương thức thanh toán :</span>
-                <select name="method" required>
-                    <option value="cash on delivery">Thanh toán khi nhận hàng</option>
-                    <?php if ($sepayConfigured): ?>
-                        <option value="sepay_qr">Chuyển khoản QR qua SePay</option>
-                    <?php endif; ?>
-                </select>
-                <?php if (!$sepayConfigured): ?>
-                    <small>Thanh toán QR SePay chưa khả dụng: máy chủ chưa được cấu hình đầy đủ.</small>
-                <?php endif; ?>
-            </div>
-            <div class="inputBox">
-                <span>Địa chỉ dòng 1 :</span>
-                <input type="text" name="flat" placeholder="Ví dụ: số nhà" required>
-            </div>
-            <div class="inputBox">
-                <span>Địa chỉ dòng 2 :</span>
-                <input type="text" name="street" placeholder="Ví dụ: tên đường" required>
-            </div>
-            <div class="inputBox">
-                <span>Thành phố :</span>
-                <input type="text" name="city" placeholder="Ví dụ: TP. HCM" required>
-            </div>
-            <div class="inputBox">
-                <span>Quận/Huyện :</span>
-                <input type="text" name="state" placeholder="Ví dụ: Tân Phú" required>
-            </div>
-            <div class="inputBox">
-                <span>Quốc gia :</span>
-                <input type="text" name="country" placeholder="Ví dụ: Việt Nam" required>
-            </div>
-            <div class="inputBox">
-                <span>Mã bưu điện :</span>
-                <input type="number" min="0" name="pin_code" placeholder="Ví dụ: 100000" required>
-            </div>
-        </div>
-        <input type="submit" name="order" value="Đặt hàng ngay" class="btn">
-    </form>
-
-</section>
-<?php endif; ?>
-
-<?php @include '../components/footer.php'; ?>
-<script src="../js/script.js"></script>
+</div></main>
+<?php include '../components/footer.php'; ?><script src="../js/script.js"></script>
 <?php if ($isQrPayment && !$isPaymentCompleted): ?>
 <script>
    const paymentStatus = document.getElementById('payment-status');
@@ -425,5 +377,4 @@ $isPaymentCompleted = $checkoutOrder && $checkoutOrder['payment_status'] === 'co
 </script>
 <?php endif; ?>
 
-</body>
-</html>
+</body></html>
