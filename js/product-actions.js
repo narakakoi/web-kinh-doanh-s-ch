@@ -55,8 +55,9 @@
       button.dataset.wishlistSaved = String(isSaved);
       button.title = isSaved ? 'Đã lưu vào yêu thích' : 'Thêm vào yêu thích';
       const icon = button.querySelector('i');
-      icon.classList.toggle('fas', isSaved);
-      icon.classList.toggle('far', !isSaved);
+      // The saved state belongs to the wishlist; the icon is only click feedback.
+      icon.classList.remove('fas');
+      icon.classList.add('far');
     });
   }
 
@@ -79,8 +80,12 @@
       const controls = forms.filter((entry) => productId(entry) === id)
         .flatMap((entry) => [...entry.querySelectorAll('[type="submit"]')]);
       const disabled = controls.map((control) => control.disabled);
+      const hearts = controls.filter((control) => control.name === 'add_to_wishlist');
       busyProducts.add(id);
       controls.forEach((control) => { control.disabled = true; });
+      if (button.name === 'add_to_wishlist') {
+        hearts.forEach((heart) => { heart.dataset.wishlistPending = 'true'; });
+      }
       const controller = new AbortController();
       const timeout = window.setTimeout(() => controller.abort(), 12000);
       try {
@@ -106,6 +111,7 @@
       } finally {
         window.clearTimeout(timeout);
         busyProducts.delete(id);
+        hearts.forEach((heart) => { delete heart.dataset.wishlistPending; });
         controls.forEach((control, index) => { control.disabled = disabled[index]; });
       }
     });

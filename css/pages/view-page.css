@@ -192,11 +192,15 @@
   background: #f7f1ff;
   border-color: #b9a3d5
 }
-.bs-view-page .bs-view-like:hover i,
-.bs-view-page .bs-view-like:focus-visible i,
-.bs-view-page .bs-view-like[data-wishlist-saved="true"] i {
+/* Kết thúc yêu cầu thì trở lại tim rỗng, kể cả khi nút còn focus. */
+.bs-view-page .bs-view-like:active i,
+.bs-view-page .bs-view-like[data-wishlist-pending="true"] i {
   color: var(--wishlist-heart);
   font-weight: 900;
+}
+.bs-view-page .bs-view-like:focus-visible {
+  outline: 2px solid #bba0ec;
+  outline-offset: 2px;
 }
 /* 04. Mô tả sách riêng, dễ đọc */
 .bs-view-page .bs-view-description {

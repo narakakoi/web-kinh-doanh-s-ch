@@ -92,7 +92,7 @@ $wishlistProducts = product_wishlist_ids($conn, (int) $user_id);
             <input type="number" name="product_quantity" value="1" min="1" max="99" class="qty">
             <input type="hidden" name="product_csrf" value="<?= htmlspecialchars($_SESSION['product_csrf'], ENT_QUOTES, 'UTF-8') ?>">
             <input type="hidden" name="product_id" value="<?php echo $fetch_products['id']; ?>">
-            <button type="submit" name="add_to_wishlist" value="1" class="option-btn" formnovalidate data-wishlist-saved="<?= isset($wishlistProducts[(int) $fetch_products['id']]) ? 'true' : 'false' ?>" title="<?= isset($wishlistProducts[(int) $fetch_products['id']]) ? 'Đã lưu vào yêu thích' : 'Thêm vào yêu thích' ?>"><i class="<?= isset($wishlistProducts[(int) $fetch_products['id']]) ? 'fas' : 'far' ?> fa-heart" aria-hidden="true"></i> Yêu thích</button>
+            <button type="submit" name="add_to_wishlist" value="1" class="option-btn" formnovalidate data-wishlist-saved="<?= isset($wishlistProducts[(int) $fetch_products['id']]) ? 'true' : 'false' ?>" title="<?= isset($wishlistProducts[(int) $fetch_products['id']]) ? 'Đã lưu vào yêu thích' : 'Thêm vào yêu thích' ?>"><i class="far fa-heart" aria-hidden="true"></i> Yêu thích</button>
             <input type="submit" value="Thêm vào giỏ hàng" name="add_to_cart" class="btn">
          </div>
       </form>
