@@ -6,28 +6,32 @@ if (!isset($conn) || !($conn instanceof mysqli)) {
     exit('Không thể kết nối cơ sở dữ liệu.');
 }
 
-if(isset($_POST['submit'])){
-   $filter_name = filter_var($_POST['name'], FILTER_SANITIZE_STRING);
-   $name = mysqli_real_escape_string($conn, $filter_name);
-   $filter_email = filter_var($_POST['email'], FILTER_SANITIZE_STRING);
-   $email = mysqli_real_escape_string($conn, $filter_email);
-   $filter_pass = filter_var($_POST['pass'], FILTER_SANITIZE_STRING);
-   $pass = mysqli_real_escape_string($conn, md5($filter_pass));
-   $filter_cpass = filter_var($_POST['cpass'], FILTER_SANITIZE_STRING);
-   $cpass = mysqli_real_escape_string($conn, md5($filter_cpass));
-   $select_users = mysqli_query($conn, "SELECT * FROM `users` WHERE email = '$email'") or die('Lỗi truy vấn');
+session_start();
 
-   if(mysqli_num_rows($select_users) > 0){
+if(isset($_POST['submit'])){
+   $name = trim(is_string($_POST['name'] ?? null) ? $_POST['name'] : '');
+   $email = trim(is_string($_POST['email'] ?? null) ? $_POST['email'] : '');
+   $pass = is_string($_POST['pass'] ?? null) ? $_POST['pass'] : '';
+   $cpass = is_string($_POST['cpass'] ?? null) ? $_POST['cpass'] : '';
+   $stmt = mysqli_prepare($conn, 'SELECT id FROM users WHERE email = ? LIMIT 1');
+   mysqli_stmt_bind_param($stmt, 's', $email);
+   mysqli_stmt_execute($stmt);
+   $existingUser = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
+   mysqli_stmt_close($stmt);
+   if ($name === '' || strlen($name) > 100 || !filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($email) > 255 || $pass === '' || strlen($pass) > 72 || str_contains($pass, "\0")) {
+      $message[] = 'Vui lòng nhập tên, email hợp lệ và mật khẩu từ 1 đến 72 byte.';
+   } elseif ($existingUser) {
       $message[] = 'Người dùng đã tồn tại!';
-   }else{
-      if($pass != $cpass){
-         $message[] = 'Mật khẩu xác nhận không khớp!';
-      }else{
-         mysqli_query($conn, "INSERT INTO `users`(name, email, password) VALUES('$name', '$email', '$pass')") or die('Lỗi truy vấn');
-         $message[] = 'Đăng ký thành công!';
-         header('location:login.php');
-         exit();
-      }
+   } elseif ($pass !== $cpass) {
+      $message[] = 'Mật khẩu xác nhận không khớp!';
+   } else {
+      $hash = password_hash($pass, PASSWORD_DEFAULT);
+      $stmt = mysqli_prepare($conn, 'INSERT INTO users (name, email, password) VALUES (?, ?, ?)');
+      mysqli_stmt_bind_param($stmt, 'sss', $name, $email, $hash);
+      mysqli_stmt_execute($stmt);
+      mysqli_stmt_close($stmt);
+      header('location:login.php');
+      exit();
    }
 }
 
@@ -72,5 +76,6 @@ if(isset($message)){
       <p>Đã có tài khoản? <a href="login.php">Đăng nhập ngay</a></p>
    </form>
 </section>
+<script src="../js/script.js"></script>
 </body>
 </html>
