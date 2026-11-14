@@ -85,7 +85,7 @@ if(isset($_POST['add_to_cart'])){
       ?>
       <form action="" method="POST" class="bs-view-book-form">
          <div class="bs-view-product">
-            <div class="bs-view-visual"><div class="bs-view-image-frame"><img src="../uploaded_img/<?= $bookImage ?>" alt="Bìa sách <?= $bookName ?>"></div><div class="bs-view-image-note"><i class="far fa-image" aria-hidden="true"></i> Hình ảnh bìa sách</div></div>
+            <div class="bs-view-visual"><div class="bs-view-image-frame"><img src="../uploaded_img/<?= $bookImage ?>" alt="Bìa sách <?= $bookName ?>"></div></div>
             <div class="bs-view-information">
                <span class="bs-view-kicker"><i class="fas fa-book-open" aria-hidden="true"></i> GÓC SÁCH BOOKSTORY</span>
                <a href="shop.php?category=<?= urlencode((string) $fetch_products['category']) ?>" class="bs-view-category"><?= $bookCategory ?></a>
@@ -101,7 +101,7 @@ if(isset($_POST['add_to_cart'])){
             </div>
          </div>
       </form>
-      <section class="bs-view-description" aria-labelledby="bs-book-desc-title"><div class="bs-view-description-header"><i class="fas fa-align-left" aria-hidden="true"></i><h2 id="bs-book-desc-title">Nội dung sách</h2></div><p><?= nl2br(htmlspecialchars((string) $fetch_products['details'], ENT_QUOTES, 'UTF-8')) ?></p></section>
+      <section class="bs-view-description" aria-labelledby="bs-book-desc-title"><div class="bs-view-description-header"><h2 id="bs-book-desc-title">Nội dung sách</h2></div><p><?= nl2br(htmlspecialchars((string) $fetch_products['details'], ENT_QUOTES, 'UTF-8')) ?></p></section>
       <?php else: ?>
          <div class="bs-view-missing"><i class="fas fa-book-open" aria-hidden="true"></i><h1>Không tìm thấy sách</h1><p>Cuốn sách này có thể đã được gỡ khỏi cửa hàng.</p><a href="shop.php">Quay lại cửa hàng</a></div>
       <?php endif; ?>

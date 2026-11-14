@@ -27,8 +27,10 @@ if ($user_id <= 0) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- liên kết tệp CSS tùy chỉnh -->
     <link rel="stylesheet" href="../css/style.css">
+    <!-- Chỉ nạp palette pastel cho trang Về chúng tôi. -->
+    <link rel="stylesheet" href="../css/pages/about.css">
 </head>
-<body>
+<body class="bs-about-page">
 <?php @include '../components/header.php'; ?>
 
 <section class="heading">
