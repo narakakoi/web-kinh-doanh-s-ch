@@ -57,13 +57,13 @@ $user_id = $_SESSION['user_id'] ?? null;
                     $select_wishlist_count = mysqli_query($conn, "SELECT * FROM `wishlist` WHERE user_id = '$user_id'") or die('query failed');
                     $wishlist_num_rows = mysqli_num_rows($select_wishlist_count);
                 ?>
-                <a href="<?php echo getBaseUrl(); ?>pages/wishlist.php"><i class="fas fa-heart"></i><span>(<?php echo $wishlist_num_rows; ?>)</span></a>
+                <a href="<?php echo getBaseUrl(); ?>pages/wishlist.php"><i class="fas fa-heart"></i><span data-wishlist-count>(<?php echo $wishlist_num_rows; ?>)</span></a>
                 
                 <?php
                     $select_cart_count = mysqli_query($conn, "SELECT * FROM `cart` WHERE user_id = '$user_id'") or die('query failed');
                     $cart_num_rows = mysqli_num_rows($select_cart_count);
                 ?>
-                <a href="<?php echo getBaseUrl(); ?>pages/cart.php"><i class="fas fa-shopping-cart"></i><span>(<?php echo $cart_num_rows; ?>)</span></a>
+                <a href="<?php echo getBaseUrl(); ?>pages/cart.php"><i class="fas fa-shopping-cart"></i><span data-cart-count>(<?php echo $cart_num_rows; ?>)</span></a>
                 
                 <div id="user-btn" class="fas fa-user"></div>
             <?php else: ?>

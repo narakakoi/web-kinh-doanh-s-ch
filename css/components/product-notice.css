@@ -1,0 +1,66 @@
+/* index/shop/search/view: thông báo nổi, không đẩy hoặc che toàn bộ header. */
+.bs-product-toast {
+  position: fixed;
+  top: 88px;
+  right: 20px;
+  z-index: 1100;
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) 26px;
+  align-items: center;
+  gap: 10px;
+  width: min(370px, calc(100% - 32px));
+  padding: 13px 14px;
+  border: 1px solid #e9dff0;
+  border-radius: 14px;
+  background: #fff;
+  color: #66516f;
+  box-shadow: 0 10px 30px rgba(65, 42, 80, .13);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.bs-product-toast[hidden] {
+  display: none;
+}
+.bs-product-toast .bs-toast-symbol {
+  color: #ad7197;
+}
+.bs-product-toast [data-toast-message] {
+  overflow-wrap: anywhere;
+}
+.bs-product-toast [data-toast-close] {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  background: #faf6fc;
+  color: #8b7895;
+  cursor: pointer;
+}
+.bs-product-toast [data-toast-close]:hover {
+  background: #f0e7f5;
+}
+.bs-product-toast [data-toast-close]:focus-visible {
+  outline: 2px solid #bba0ec;
+  outline-offset: 2px;
+}
+.bs-product-toast .bs-toast-error {
+  display: none;
+}
+.bs-product-toast[data-kind="error"] {
+  border-color: #edcbd5;
+}
+.bs-product-toast[data-kind="error"] .bs-toast-symbol {
+  color: #bb536d;
+}
+.bs-product-toast[data-kind="error"] .bs-toast-check {
+  display: none;
+}
+.bs-product-toast[data-kind="error"] .bs-toast-error {
+  display: inline;
+}
+@media (max-width: 480px) {
+  .bs-product-toast {
+    right: 16px;
+  }
+}
