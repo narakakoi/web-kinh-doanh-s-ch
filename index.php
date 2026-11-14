@@ -95,7 +95,7 @@ try {
    <!-- CSS riêng trang chủ: khu ưu đãi và liên hệ, không đè các màn hình khác. -->
    <link rel="stylesheet" href="css/pages/home.css">
 </head>
-<body>
+<body class="bs-home-page">
    
 <?php @include 'components/header.php'; ?>
 <section class="home">
@@ -208,9 +208,7 @@ try {
          </div>
       <?php else: ?>
          <div class="bs-offers-empty">
-            <i class="fas fa-gift" aria-hidden="true"></i>
             <div><strong>Chưa có mã giảm giá đang áp dụng</strong><span>Khi cửa hàng phát hành voucher mới, mã sẽ xuất hiện tại đây.</span></div>
-            <a href="pages/shop.php">Xem sách ngay</a>
          </div>
       <?php endif; ?>
    </div>
