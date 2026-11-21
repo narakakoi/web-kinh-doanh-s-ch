@@ -7,13 +7,6 @@ if (!isset($conn) || !($conn instanceof mysqli)) {
 }
 
 session_start();
-
-$user_id = (int) ($_SESSION['user_id'] ?? 0);
-
-if ($user_id <= 0) {
-    header('location:../pages/login.php');
-    exit();
-}
 ?>
 
 <!DOCTYPE html>

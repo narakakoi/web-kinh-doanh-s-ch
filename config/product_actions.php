@@ -80,6 +80,10 @@ function handle_product_action(mysqli $conn, int $userId, array $input): array
 /** Dùng mã sản phẩm làm khóa để mọi nơi hiển thị cùng một cuốn sách đều nhất quán. */
 function product_wishlist_ids(mysqli $conn, int $userId): array
 {
+    if ($userId <= 0) {
+        return [];
+    }
+
     $stmt = mysqli_prepare($conn, 'SELECT pid FROM wishlist WHERE user_id = ?');
     mysqli_stmt_bind_param($stmt, 'i', $userId);
     mysqli_stmt_execute($stmt);
@@ -103,11 +107,21 @@ function product_header_counts(mysqli $conn, int $userId): array
 }
 
 /** AJAX trả về JSON; POST thường khi thành công chuyển sang GET để tránh gửi lại thao tác. */
-function process_product_request(mysqli $conn, int $userId, array $input, string $returnUrl): array
-{
+function process_product_request(
+    mysqli $conn,
+    int $userId,
+    array $input,
+    string $returnUrl,
+    string $loginUrl
+): array {
+    $action = requested_product_action($input);
+    if ($userId <= 0 && $action !== null) {
+        header('Location: ' . $loginUrl, true, 303);
+        exit();
+    }
+
     $messages = $_SESSION['product_notice'] ?? [];
     unset($_SESSION['product_notice']);
-    $action = requested_product_action($input);
     $result = handle_product_action($conn, $userId, $input);
     if ($action === null) return $messages;
 

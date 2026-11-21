@@ -8,18 +8,11 @@ if (!isset($conn) || !($conn instanceof mysqli)) {
 
 session_start();
 
-$user_id = $_SESSION['user_id'] ?? null;
-
-if (!isset($user_id)) {
-    header('location:pages/login.php');
-    exit();
-}
-
-$message = [];
+$user_id = (int) ($_SESSION['user_id'] ?? 0);
 
 require_once __DIR__ . '/config/product_actions.php';
-$message = process_product_request($conn, (int) $user_id, $_POST, 'index.php');
-$wishlistProducts = product_wishlist_ids($conn, (int) $user_id);
+$message = process_product_request($conn, $user_id, $_POST, 'index.php', 'pages/login.php');
+$wishlistProducts = product_wishlist_ids($conn, $user_id);
 
 // BOOKSTORY / TRANG CHỦ: chỉ hiển thị mã giảm giá còn hiệu lực.
 // Cùng điều kiện lọc với checkout.php; nếu bảng chưa được cài, trang vẫn hoạt động.
