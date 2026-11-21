@@ -88,7 +88,6 @@ if (isset($_POST['order'])) {
     $street = trim($_POST['street'] ?? '');
     $city = trim($_POST['city'] ?? '');
     $country = trim($_POST['country'] ?? '');
-    $pinCode = trim($_POST['pin_code'] ?? '');
 
     $allowedMethods = ['cash on delivery'];
     if ($sepayConfigured) {
@@ -101,12 +100,12 @@ if (isset($_POST['order'])) {
     } elseif (!in_array($method, $allowedMethods, true)) {
         $message[] = 'Phương thức thanh toán không hợp lệ hoặc chưa được cấu hình.';
     } elseif ($name === '' || $number === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)
-        || $flat === '' || $street === '' || $city === '' || $country === '' || $pinCode === ''
+        || $flat === '' || $street === '' || $city === '' || $country === ''
         || trim($_POST['state'] ?? '') === '') {
         $message[] = 'Vui lòng nhập đầy đủ thông tin giao hàng hợp lệ.';
     } else {
         $state = trim($_POST['state']);
-        $address = 'số nhà ' . $flat . ', ' . $street . ', ' . $city . ', ' . $state . ', ' . $country . ' - ' . $pinCode;
+        $address = 'số nhà ' . $flat . ', ' . $street . ', ' . $city . ', ' . $state . ', ' . $country;
         $placed_on = date('d-M-Y');
 
         [$cart_total, $cart_products] = $getCartTotal($conn, (int) $user_id);
@@ -320,7 +319,6 @@ $isPaymentCompleted = $checkoutOrder && $checkoutOrder['payment_status'] === 'co
             <label><span>Thành phố <em>*</em></span><input name="city" required value="<?= $escape($_POST['city'] ?? '') ?>" placeholder="TP. Hồ Chí Minh"></label>
             <label><span>Quận / Huyện <em>*</em></span><input name="state" required value="<?= $escape($_POST['state'] ?? '') ?>" placeholder="Quận 5"></label>
             <label><span>Quốc gia <em>*</em></span><input name="country" required value="<?= $escape($_POST['country'] ?? 'Việt Nam') ?>" placeholder="Việt Nam"></label>
-            <label><span>Mã bưu điện <em>*</em></span><input name="pin_code" required inputmode="numeric" value="<?= $escape($_POST['pin_code'] ?? '') ?>" placeholder="700000"></label>
           </div></div>
           <div class="bs-form-section"><div class="bs-form-title"><i class="far fa-credit-card"></i><h3>Phương thức thanh toán</h3></div><div class="bs-payment-options">
              <label class="bs-payment-choice"><input type="radio" name="method" value="cash on delivery" <?= ($_POST['method'] ?? 'cash on delivery') === 'cash on delivery' ? 'checked' : '' ?>><span><strong>Thanh toán khi nhận hàng</strong><small>Thanh toán tiền mặt khi nhận sách (COD)</small></span></label>
