@@ -18,7 +18,7 @@ if (!isset($admin_id)) {
 if (isset($_POST['add_product'])) {
     $name = mysqli_real_escape_string($conn, trim($_POST['name']));
     $category = mysqli_real_escape_string($conn, trim($_POST['category']));
-    $price = (float)$_POST['price'];
+    $price = (float)str_replace('.', '', $_POST['price']);
     $details = mysqli_real_escape_string($conn, trim($_POST['details']));
 
     $image = $_FILES['image']['name'];
@@ -139,7 +139,7 @@ while ($row = mysqli_fetch_assoc($select_products)) {
                   <small id="formattedPriceHint" style="color: var(--brown); font-weight:700;">0 VNĐ</small>
                </label>
                <div class="price-input-wrapper">
-                  <input type="number" min="1000" step="1000" class="studio-input" id="bookPriceInput" name="price" placeholder="Ví dụ: 85000" required>
+                  <input type="text" inputmode="numeric" class="studio-input" id="bookPriceInput" name="price" placeholder="Ví dụ: 85.000" required>
                   <span class="currency-tag">VNĐ</span>
                </div>
                <div class="quick-action-chips">
@@ -160,7 +160,7 @@ while ($row = mysqli_fetch_assoc($select_products)) {
                   <div class="dropzone-info">
                      <div class="dropzone-icon"><i class="fas fa-cloud-upload-alt"></i></div>
                      <div class="dropzone-text">
-                        <h4 id="fileNameDisplay">Tải ảnh bìa từ máy Mac</h4>
+                        <h4 id="fileNameDisplay">Tải ảnh bìa từ máy</h4>
                         <p id="fileSizeDisplay">Kéo thả hoặc bấm để chọn (Tối đa 5MB)</p>
                      </div>
                   </div>
@@ -311,8 +311,14 @@ document.addEventListener('DOMContentLoaded', function () {
    const previewCoverImg = document.getElementById('previewCoverImg');
    const previewPlaceholder = document.getElementById('previewPlaceholder');
 
+   function formatNumberDots(val) {
+      const digits = String(val || '').replace(/\D/g, '');
+      return digits.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+   }
+
    function formatVND(val) {
-      return Number(val || 0).toLocaleString('vi-VN') + ' VNĐ';
+      const num = parseInt(String(val || '').replace(/\D/g, ''), 10) || 0;
+      return num.toLocaleString('vi-VN') + ' VNĐ';
    }
 
    nameInput.addEventListener('input', function () {
@@ -324,6 +330,7 @@ document.addEventListener('DOMContentLoaded', function () {
    });
 
    priceInput.addEventListener('input', function () {
+      this.value = formatNumberDots(this.value);
       const formatted = formatVND(this.value);
       formattedPriceHint.textContent = formatted;
       previewBookPrice.textContent = formatted;
