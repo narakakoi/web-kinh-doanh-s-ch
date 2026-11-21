@@ -1,5 +1,8 @@
 -- Thiết lập cơ sở dữ liệu một lần cho ứng dụng bán sách.
--- Chạy tệp này một lần trong MySQL/phpMyAdmin để tạo cấu trúc và nạp danh mục hiện tại.
+-- Chạy toàn bộ tệp này trong MySQL/phpMyAdmin để tạo database shop_db,
+-- các bảng website/chatbot và nạp danh mục sách ban đầu.
+-- Tài khoản quản trị mặc định (chỉ dùng khi cài đặt local): 123@gmail.com / 123.
+-- Đổi mật khẩu mặc định sau khi đăng nhập lần đầu.
 
 -- ===== shop_db.sql =====
 CREATE DATABASE IF NOT EXISTS `shop_db`
