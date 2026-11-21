@@ -8,13 +8,14 @@ if (!isset($conn) || !($conn instanceof mysqli)) {
 
 session_start();
 $user_id = (int) ($_SESSION['user_id'] ?? 0);
-if ($user_id <= 0) {
-    header('location:../pages/login.php');
-    exit();
-}
 
 // Giữ nguyên các tên trường và cách lưu bảng message của nhóm.
 if (isset($_POST['send'])) {
+    if ($user_id <= 0) {
+        header('Location: login.php', true, 303);
+        exit();
+    }
+
     $name = mysqli_real_escape_string($conn, trim((string) ($_POST['name'] ?? '')));
     $email = mysqli_real_escape_string($conn, trim((string) ($_POST['email'] ?? '')));
     $number = mysqli_real_escape_string($conn, trim((string) ($_POST['number'] ?? '')));
@@ -71,22 +72,28 @@ if (isset($_POST['send'])) {
          <div class="bs-contact-form-card">
             <div class="bs-contact-form-heading">
                <h2>Gửi lời nhắn</h2>
-               <p>Điền vài thông tin cơ bản để BookStory có thể liên hệ lại với bạn.</p>
+               <?php if ($user_id > 0): ?>
+                  <p>Điền vài thông tin cơ bản để BookStory có thể liên hệ lại với bạn.</p>
+               <?php endif; ?>
             </div>
-            <?php if (!empty($message)): ?>
-               <?php foreach ($message as $feedback): ?><p class="bs-contact-notice" role="status"><?= htmlspecialchars((string) $feedback, ENT_QUOTES, 'UTF-8') ?></p><?php endforeach; ?>
+            <?php if ($user_id > 0): ?>
+               <?php if (!empty($message)): ?>
+                  <?php foreach ($message as $feedback): ?><p class="bs-contact-notice" role="status"><?= htmlspecialchars((string) $feedback, ENT_QUOTES, 'UTF-8') ?></p><?php endforeach; ?>
+               <?php endif; ?>
+               <!-- Giữ nguyên tên trường name/email/number/message và name=send để PHP xử lý như cũ. -->
+               <form action="" method="POST" class="bs-contact-form">
+                  <div class="bs-contact-field"><label for="bs-contact-name">Họ và tên <span>*</span></label><input id="bs-contact-name" type="text" name="name" placeholder="Tên của bạn" autocomplete="name" maxlength="100" required></div>
+                  <div class="bs-contact-row">
+                     <div class="bs-contact-field"><label for="bs-contact-email">Email <span>*</span></label><input id="bs-contact-email" type="email" name="email" placeholder="email@example.com" autocomplete="email" maxlength="255" required></div>
+                     <div class="bs-contact-field"><label for="bs-contact-phone">Số điện thoại <span>*</span></label><input id="bs-contact-phone" type="tel" name="number" placeholder="Số điện thoại liên hệ" autocomplete="tel" maxlength="30" required></div>
+                  </div>
+                  <div class="bs-contact-field"><label for="bs-contact-message">Nội dung tin nhắn <span>*</span></label><textarea id="bs-contact-message" name="message" placeholder="Bạn cần BookStory hỗ trợ điều gì?" rows="6" required></textarea></div>
+                  <button type="submit" name="send" value="1" class="bs-contact-submit">Gửi tin nhắn</button>
+                  <p class="bs-contact-privacy">Lưu ý: Không gửi mật khẩu hoặc thông tin thanh toán qua biểu mẫu.</p>
+               </form>
+            <?php else: ?>
+               <a href="login.php" class="btn">Đăng nhập để gửi lời nhắn</a>
             <?php endif; ?>
-            <!-- Giữ nguyên tên trường name/email/number/message và name=send để PHP xử lý như cũ. -->
-            <form action="" method="POST" class="bs-contact-form">
-               <div class="bs-contact-field"><label for="bs-contact-name">Họ và tên <span>*</span></label><input id="bs-contact-name" type="text" name="name" placeholder="Tên của bạn" autocomplete="name" maxlength="100" required></div>
-               <div class="bs-contact-row">
-                  <div class="bs-contact-field"><label for="bs-contact-email">Email <span>*</span></label><input id="bs-contact-email" type="email" name="email" placeholder="email@example.com" autocomplete="email" maxlength="255" required></div>
-                  <div class="bs-contact-field"><label for="bs-contact-phone">Số điện thoại <span>*</span></label><input id="bs-contact-phone" type="tel" name="number" placeholder="Số điện thoại liên hệ" autocomplete="tel" maxlength="30" required></div>
-               </div>
-               <div class="bs-contact-field"><label for="bs-contact-message">Nội dung tin nhắn <span>*</span></label><textarea id="bs-contact-message" name="message" placeholder="Bạn cần BookStory hỗ trợ điều gì?" rows="6" required></textarea></div>
-               <button type="submit" name="send" value="1" class="bs-contact-submit">Gửi tin nhắn</button>
-               <p class="bs-contact-privacy">Lưu ý: Không gửi mật khẩu hoặc thông tin thanh toán qua biểu mẫu.</p>
-            </form>
          </div>
       </div>
    </section>

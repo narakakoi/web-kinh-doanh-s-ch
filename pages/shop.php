@@ -10,16 +10,12 @@ if (!isset($conn) || !($conn instanceof mysqli)) {
 }
 
 $user_id = (int) ($_SESSION['user_id'] ?? 0);
-if ($user_id <= 0) {
-   header('location:../pages/login.php');
-   exit();
-}
 
 require_once __DIR__ . '/../config/product_actions.php';
 $returnUrl = 'shop.php';
 if (is_string($_GET['category'] ?? null)) $returnUrl .= '?' . http_build_query(['category' => $_GET['category']]);
-$message = process_product_request($conn, (int) $user_id, $_POST, $returnUrl);
-$wishlistProducts = product_wishlist_ids($conn, (int) $user_id);
+$message = process_product_request($conn, $user_id, $_POST, $returnUrl, 'login.php');
+$wishlistProducts = product_wishlist_ids($conn, $user_id);
 
 ?>
 

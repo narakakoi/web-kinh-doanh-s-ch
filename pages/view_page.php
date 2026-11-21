@@ -8,15 +8,11 @@ if (!isset($conn) || !($conn instanceof mysqli)) {
 
 session_start();
 $user_id = (int) ($_SESSION['user_id'] ?? 0);
-if ($user_id <= 0) {
-   header('location:../pages/login.php');
-   exit();
-}
 
 require_once __DIR__ . '/../config/product_actions.php';
 $returnUrl = 'view_page.php?pid=' . (int) ($_GET['pid'] ?? 0);
-$message = process_product_request($conn, (int) $user_id, $_POST, $returnUrl);
-$wishlistProducts = product_wishlist_ids($conn, (int) $user_id);
+$message = process_product_request($conn, $user_id, $_POST, $returnUrl, 'login.php');
+$wishlistProducts = product_wishlist_ids($conn, $user_id);
 
 ?>
 

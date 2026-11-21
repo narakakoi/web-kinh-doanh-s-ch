@@ -10,18 +10,13 @@ session_start();
 
 $user_id = (int) ($_SESSION['user_id'] ?? 0);
 
-if ($user_id <= 0) {
-   header('location:../pages/login.php');
-   exit();
-}
-
 require_once __DIR__ . '/../config/product_actions.php';
 $rawSearch = $_GET['search_box'] ?? $_POST['search_box'] ?? null;
 $hasSearch = is_string($rawSearch);
 $searchTerm = $hasSearch ? trim($rawSearch) : '';
 $returnUrl = 'search_page.php' . ($hasSearch ? '?' . http_build_query(['search_box' => $searchTerm]) : '');
-$message = process_product_request($conn, (int) $user_id, $_POST, $returnUrl);
-$wishlistProducts = product_wishlist_ids($conn, (int) $user_id);
+$message = process_product_request($conn, $user_id, $_POST, $returnUrl, 'login.php');
+$wishlistProducts = product_wishlist_ids($conn, $user_id);
 
 ?>
 
