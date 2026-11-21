@@ -45,6 +45,39 @@ $total_senders = count($unique_senders);
    <title>Trung Tâm CSKH & Hộp Thư - BookStory Admin</title>
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
    <link rel="stylesheet" href="../css/admin_style.css?v=<?php echo time(); ?>">
+   <style>
+      /* Fix lỗi tràn chữ khi khách nhập chuỗi dài không dấu cách */
+      .enterprise-ticket-card {
+         min-width: 0;
+         overflow: hidden;
+      }
+      .t-sender-box,
+      .t-sender-meta {
+         min-width: 0;
+      }
+      .t-sender-meta h3 {
+         overflow-wrap: anywhere;
+         word-break: break-word;
+      }
+      .t-contact-row {
+         gap: 12px;
+         align-items: flex-start;
+      }
+      .t-contact-row span {
+         flex-shrink: 0;
+      }
+      .t-contact-row strong {
+         min-width: 0;
+         text-align: right;
+         overflow-wrap: anywhere;
+         word-break: break-word;
+      }
+      .t-message-bubble,
+      .t-message-bubble p {
+         overflow-wrap: anywhere;
+         word-break: break-word;
+      }
+   </style>
 </head>
 <body>
    
@@ -129,7 +162,7 @@ $total_senders = count($unique_senders);
 
                   <div class="t-contact-info">
                      <div class="t-contact-row">
-                        <span><i class="fas fa-phone-alt"></i> Điện thoại:</span>
+                        <span><i class="fas fa-phone"></i> Điện thoại:</span>
                         <strong><?php echo htmlspecialchars($fetch_message['number']); ?></strong>
                      </div>
                      <div class="t-contact-row">
