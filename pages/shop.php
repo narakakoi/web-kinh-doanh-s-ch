@@ -81,7 +81,14 @@ $wishlistProducts = product_wishlist_ids($conn, $user_id);
       <form action="" method="POST" class="box" data-product-form>
          <a href="view_page.php?pid=<?php echo $fetch_products['id']; ?>" class="fas fa-eye"></a>
          <div class="price"><?php echo number_format($fetch_products['price'], 0, ',', '.'); ?> VNĐ</div>
-         <img src="../uploaded_img/<?php echo htmlspecialchars(basename($fetch_products['image']), ENT_QUOTES, 'UTF-8'); ?>" alt="" class="image">
+         <a href="view_page.php?pid=<?= (int) $fetch_products['id'] ?>">
+         <img
+              loading="lazy"
+              class="image"
+              src="../uploaded_img/<?= htmlspecialchars(basename((string) $fetch_products['image']), ENT_QUOTES, 'UTF-8') ?>"
+              alt="Bìa sách <?= htmlspecialchars((string) $fetch_products['name'], ENT_QUOTES, 'UTF-8') ?>"
+            >
+         </a>
          <div class="name"><?php echo htmlspecialchars($fetch_products['name'], ENT_QUOTES, 'UTF-8'); ?></div>
          <div class="category"><?php echo htmlspecialchars($fetch_products['category'], ENT_QUOTES, 'UTF-8'); ?></div>
          <div class="box-actions">
