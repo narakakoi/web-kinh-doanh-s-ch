@@ -86,9 +86,11 @@ Mapping hiện tại là `id`, `name`, `details`, `category`, `price`, `image`; 
 - “Xin chào” nhận lời chào; không tìm sách có chữ “chào”.
 - “Tìm sách Python dưới 200k” phải khớp **Python và giá tối đa 200.000đ**. Không có sách phù hợp thì báo chưa tìm thấy, không chèn sách khác.
 - “Gợi ý sách hay” dùng danh sách gợi ý. Chỉ dùng gợi ý chung khi khách chưa nêu chủ đề cụ thể.
+- Có thể hỏi nội dung/tóm tắt một cuốn sách, thể loại, hoặc nêu sở thích như “Tôi thích truyện tranh”. Câu hỏi nội dung cần có tên sách; câu hỏi thể loại chung liệt kê thể loại đang có trong danh mục.
+- Câu hỏi ngoài sách và chính sách cửa hàng bị từ chối. Khi không có API key/OpenAI lỗi, câu trả lời về nội dung dùng mô tả trong danh mục; nếu mô tả không có thì bot nói rõ thay vì tự bịa.
 - Hỗ trợ tìm không dấu và ngân sách như `200k`, `200.000 đồng`, `200,000 VND`, `1,5 triệu`. Bảng sản phẩm cần collation không phân biệt dấu, như `utf8mb4_unicode_ci` trong bộ SQL cài đặt.
 
-Đây là tìm từ khóa bằng SQL, chưa phải tìm ngữ nghĩa hay trợ lý nhớ hội thoại. Câu sau muốn đổi ngân sách cần nhắc lại chủ đề, ví dụ “Python dưới 300k”.
+Tìm sách vẫn dùng từ khóa SQL, chưa phải tìm ngữ nghĩa hay trợ lý nhớ hội thoại. Câu sau muốn đổi ngân sách cần nhắc lại chủ đề, ví dụ “Python dưới 300k”.
 
 ## Bật OpenAI (tùy chọn)
 

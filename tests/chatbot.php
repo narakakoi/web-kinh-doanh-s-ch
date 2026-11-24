@@ -50,6 +50,10 @@ foreach ([
 check(bb_search_terms('Gợi ý sách hay cho người mới bắt đầu') === [], 'Generic recommendation became a topic');
 check(bb_search_terms('Tìm sách lập trình cho người mới học dưới 200k') === ['lap', 'trinh'], 'Budget/filler leaked into keywords');
 check(bb_search_terms('Tìm sách Python dưới 200.000 đồng') === ['python'], 'Price became a keyword');
+check(bb_search_terms('Tôi thích truyện tranh') === ['truyen', 'tranh'], 'Preference wording leaked into genre search');
+check(bb_search_terms('Nội dung sách Jujutsu Kaisen') === ['jujutsu', 'kaisen'], 'Book-content wording leaked into title search');
+check(bb_search_terms('Nội dung của cuốn sách này') === [], 'Generic book-content wording became search terms');
+check(bb_search_terms('Thể loại nào hợp với tôi?') === [], 'Generic genre preference became search terms');
 
 $pdo = bb_db();
 $pdo->exec('CREATE TEMPORARY TABLE products (
@@ -95,6 +99,18 @@ check(str_contains(bb_chat_reply('Phí giao hàng bao nhiêu?')['answer'], $conf
 check(count(bb_faq_context('Giao hàng và đổi trả thế nào?')) === 2, 'Multiple FAQ topics were lost');
 check(bb_chat_reply('Xin chào!')['products'] === [], 'Greeting searched product titles');
 check(bb_chat_reply('Tìm sách Rust')['products'] === [], 'Missing topic fell back to recommendations');
+$reply = bb_chat_reply('Nội dung của cuốn sách này');
+check($reply['products'] === [] && str_contains($reply['answer'], 'tên sách'), 'Generic content question did not ask for a title');
+$reply = bb_chat_reply('Nội dung Jujutsu Kaisen');
+check($reply['products'][0]['id'] === 4 && str_contains($reply['answer'], 'Truyện tranh Nhật Bản'), 'Content question did not use catalog description fallback');
+$reply = bb_chat_reply('Tôi thích truyện tranh');
+check(array_column($reply['products'], 'id') === [4], 'Genre preference did not find matching books');
+$reply = bb_chat_reply('Sở thích sách của tôi?');
+check(count($reply['products']) === 5, 'Generic reading preference did not use recommendations');
+$reply = bb_chat_reply('Thể loại sách nào đang có?');
+check(str_contains($reply['answer'], 'Truyện tranh') && str_contains($reply['answer'], 'Lập trình'), 'Genre question did not list catalog categories');
+$reply = bb_chat_reply('Thời tiết hôm nay thế nào?');
+check($reply['products'] === [] && str_contains($reply['answer'], 'chỉ hỗ trợ'), 'Off-topic question was not refused');
 $reply = bb_chat_reply('Tìm sách Python dưới 100k');
 check($reply['products'] === [] && str_contains($reply['answer'], '100.000'), 'No-match budget answer is misleading');
 check(count(bb_chat_reply('Gợi ý sách hay cho người mới bắt đầu')['products']) === 5, 'Generic recommendations failed');

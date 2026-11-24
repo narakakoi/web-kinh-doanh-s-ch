@@ -94,3 +94,16 @@ function bb_search_products(string $query, int $limit = 5, ?float $maxPrice = nu
     $statement->execute($params);
     return $statement->fetchAll();
 }
+
+function bb_product_categories(int $limit = 12): array
+{
+    $category = bb_col('category');
+    if ($category === null) return [];
+
+    $limit = max(1, min(30, $limit));
+    $sql = 'SELECT DISTINCT ' . $category . ' AS category FROM ' . bb_table('product_table')
+        . ' WHERE ' . $category . ' IS NOT NULL AND TRIM(' . $category . ") <> ''"
+        . ' ORDER BY ' . $category . ' LIMIT ' . $limit;
+    $rows = bb_db()->query($sql)->fetchAll();
+    return array_map(fn($row) => (string)$row['category'], $rows);
+}
