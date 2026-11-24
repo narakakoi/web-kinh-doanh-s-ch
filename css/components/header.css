@@ -207,6 +207,15 @@
   color: var(--brown);
 }
 
+.header .flex .icons button {
+  background: transparent;
+}
+
+.header .flex .icons > :focus-visible {
+  outline: 2px solid var(--brown);
+  outline-offset: 1px;
+}
+
 .header .flex .icons span {
   font-size: 2rem;
 }
@@ -249,13 +258,53 @@
   margin-top: 5px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 991px) {
   #menu-btn {
-    display: inline-block;
+    display: inline-flex;
   }
 
   .header .flex {
-    padding: 2rem;
+    gap: 4px;
+    padding: 6px clamp(8px, 2.5vw, 20px);
+  }
+
+  .header .flex .logo {
+    font-size: clamp(16px, 5vw, 24px);
+  }
+
+  .header .flex .icons {
+    display: flex;
+    align-items: center;
+  }
+
+  .header .flex .icons > * {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: clamp(36px, 10.5vw, 44px);
+    height: 44px;
+    margin: 0;
+    font-size: 20px;
+  }
+
+  .header .flex .icons span {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0 3px;
+    border-radius: 8px;
+    background: #f4ecff;
+    color: #67428c;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 15px;
+  }
+
+  .header .flex .account-box {
+    right: 8px;
+    max-width: calc(100% - 16px);
+    overflow-wrap: anywhere;
   }
 
   .header .flex .navbar {
@@ -266,11 +315,13 @@
     background-color: var(--white);
     border-top: var(--border);
     border-bottom: var(--border);
-    clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
+    display: none;
+    max-height: calc(100dvh - 100%);
+    overflow-y: auto;
   }
 
   .header .flex .navbar.active {
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    display: block;
   }
 
   .header .flex .navbar ul li {

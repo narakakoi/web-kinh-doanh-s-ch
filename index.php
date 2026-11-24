@@ -60,22 +60,17 @@ try {
         <?php include __DIR__ . '/components/product_notice.php'; ?>
         <section class="home">
 
-            <div class ="homeslide fade">
-                <img src="images/slider_2.png" alt="lỗi">
+            <div class="homeslide fade">
+                <img src="images/slider_2.png" width="1920" height="775" alt="Ưu đãi miễn phí vận chuyển tháng 10 cho đơn hàng từ 90.000 đồng">
             </div>
-            <div class ="homeslide fade">
-                <img src="images/slider_3.png" alt="lỗi">
+            <div class="homeslide fade">
+                <img src="images/slider_3.png" width="1920" height="775" alt="Bộ đôi tiểu thuyết Chuyện bên dòng Hô Lan và Chuyện đời Ngưu Thiên Tứ">
             </div>
-            <div class ="homeslide fade">
-                <img src="images/slider_4.png" alt="lỗi">
+            <div class="homeslide fade">
+                <img src="images/slider_4.png" width="1920" height="775" alt="Sách Nít tịt mít có hai phiên bản tiếng Việt và tiếng Anh">
             </div>
-            <button class="prev" onclick="plusSlides(-1)">&#10094;</button>
-            <button class="next" onclick="plusSlides(1)">&#10095;</button>
-
-            <div class="content">
-                <!--<h3>Sách là tri thức của nhân loại</h3>
-                <a href="pages/about.php" class="btn">Xem Thêm</a>-->
-            </div>
+            <button type="button" class="prev" aria-label="Banner trước" onclick="plusSlides(-1)">&#10094;</button>
+            <button type="button" class="next" aria-label="Banner sau" onclick="plusSlides(1)">&#10095;</button>
         </section>
 
         <script>
