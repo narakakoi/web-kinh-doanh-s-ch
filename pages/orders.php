@@ -244,7 +244,7 @@ foreach ($orders as $order) {
                         <?php if ($is_pending): ?>
                             <div class="bs-order-actions">
                                 <a href="checkout.php?order_id=<?= (int) $order['id'] ?>" class="bs-btn bs-btn-primary"><i class="far fa-credit-card" aria-hidden="true"></i> Xem chi tiết / Thanh toán</a>
-                                <form action="orders.php" method="post" onsubmit="return confirm('Bạn có chắc muốn xóa đơn hàng này?');">
+                                <form action="orders.php" method="post" data-confirm-delete data-confirm-title="Xóa đơn hàng?" data-confirm-description="Bạn có chắc muốn xóa đơn hàng #<?= (int) $order['id'] ?> đang chờ này?" data-confirm-label="Xóa đơn hàng" onsubmit="return confirm('Bạn có chắc muốn xóa đơn hàng này?');">
                                     <input type="hidden" name="order_id" value="<?= (int) $order['id'] ?>">
                                     <input type="hidden" name="csrf_token" value="<?= $e($_SESSION['orders_csrf_token']) ?>">
                                     <button type="submit" name="delete_order" value="1" class="bs-btn bs-order-delete"><i class="far fa-trash-alt" aria-hidden="true"></i> Xóa đơn hàng</button>

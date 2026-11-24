@@ -1,6 +1,7 @@
 /* Dùng chung: phông chữ, biến màu, đặt lại kiểu mặc định, nút, thông báo và tiêu đề.
    Đầu trang/chân trang và bố cục từng trang được nạp riêng trong PHP. */
 @import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap");
+@import url("components/confirm-dialog.css");
 
 :root {
   --brown: #9966ff;

@@ -83,6 +83,8 @@ $user_id = $_SESSION['user_id'] ?? null;
         <?php endif; ?>
     </div>
 </header>
+<?php include __DIR__ . '/confirm_dialog.php'; ?>
+<script src="<?php echo htmlspecialchars(getBaseUrl() . 'js/confirm-dialog.js', ENT_QUOTES, 'UTF-8'); ?>"></script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
