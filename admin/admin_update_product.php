@@ -1,5 +1,6 @@
 <?php
 require_once '../config/config.php';
+require_once __DIR__ . '/../config/product_price.php';
 
 if (!isset($conn) || !($conn instanceof mysqli)) {
     http_response_code(500);
@@ -19,9 +20,12 @@ if (!isset($admin_id)) {
 if (isset($_POST['update_product'])) {
     $update_p_id =$_POST['update_p_id'];
     $name = mysqli_real_escape_string($conn, $_POST['name']);$category = mysqli_real_escape_string($conn,$_POST['category']);
-    $price = mysqli_real_escape_string($conn, $_POST['price']);$details = mysqli_real_escape_string($conn,$_POST['details']);
+    $price = parse_product_price($_POST['price'] ?? null);
+    $details = mysqli_real_escape_string($conn,$_POST['details']);
 
     if (!in_array($_POST['category'], $book_categories, true)) {$message[] = 'Thể loại sách không hợp lệ!';
+    } elseif ($price === null) {
+        $message[] = PRODUCT_PRICE_HINT;
     } else {
         mysqli_query($conn, "UPDATE `products` SET name = '$name', category = '$category', details = '$details', price = '$price' WHERE id = '$update_p_id'") or die('Truy vấn thất bại');
 
@@ -102,8 +106,10 @@ if (isset($_POST['update_product'])) {
       </div>
 
       <div class="form-group">
-         <label>Giá bán (VNĐ)</label>
-         <input type="number" min="0" class="box" value="<?php echo htmlspecialchars($fetch_products['price']); ?>" required placeholder="Cập nhật giá sản phẩm" name="price">
+         <label for="bookPriceInput">Giá bán (VNĐ)</label>
+         <input type="text" inputmode="decimal" class="box" id="bookPriceInput" name="price"
+                value="<?= format_product_price($fetch_products['price']) ?>" placeholder="Ví dụ: 85.000"
+                pattern="<?= PRODUCT_PRICE_PATTERN ?>" title="<?= PRODUCT_PRICE_HINT ?>" required>
       </div>
 
       <div class="form-group">
@@ -136,5 +142,6 @@ if (isset($_POST['update_product'])) {
 </section>
 
 <script src="../js/admin_script.js"></script>
+<script src="../js/admin-product-price.js"></script>
 </body>
 </html>
