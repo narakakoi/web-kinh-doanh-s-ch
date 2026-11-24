@@ -1,5 +1,6 @@
 <?php
 require_once '../config/config.php';
+require_once __DIR__ . '/../config/product_price.php';
 
 if (!isset($conn) || !($conn instanceof mysqli)) {
     http_response_code(500);
@@ -18,7 +19,7 @@ if (!isset($admin_id)) {
 if (isset($_POST['add_product'])) {
     $name = mysqli_real_escape_string($conn, trim($_POST['name']));
     $category = mysqli_real_escape_string($conn, trim($_POST['category']));
-    $price = (float)str_replace('.', '', $_POST['price']);
+    $price = parse_product_price($_POST['price'] ?? null);
     $details = mysqli_real_escape_string($conn, trim($_POST['details']));
 
     $image = $_FILES['image']['name'];
@@ -28,7 +29,9 @@ if (isset($_POST['add_product'])) {
 
     $select_product_name = mysqli_query($conn, "SELECT name FROM `products` WHERE name = '$name'") or die('Truy vấn thất bại');
 
-    if (mysqli_num_rows($select_product_name) > 0) {
+    if ($price === null) {
+        $message[] = PRODUCT_PRICE_HINT;
+    } elseif (mysqli_num_rows($select_product_name) > 0) {
         $message[] = 'Tên đầu sách này đã tồn tại trong kho!';
     } else {
         if ($image_size > 5000000) {
@@ -134,12 +137,13 @@ while ($row = mysqli_fetch_assoc($select_products)) {
             </div>
 
             <div class="studio-field">
-               <label class="studio-label">
+               <label class="studio-label" for="bookPriceInput">
                   <span><i class="fas fa-tag"></i> Giá bán niêm yết</span>
                   <small id="formattedPriceHint" style="color: var(--brown); font-weight:700;">0 VNĐ</small>
                </label>
                <div class="price-input-wrapper">
-                  <input type="text" inputmode="numeric" class="studio-input" id="bookPriceInput" name="price" placeholder="Ví dụ: 85.000" required>
+                  <input type="text" inputmode="decimal" class="studio-input" id="bookPriceInput" name="price"
+                         placeholder="Ví dụ: 85.000" pattern="<?= PRODUCT_PRICE_PATTERN ?>" title="<?= PRODUCT_PRICE_HINT ?>" required>
                   <span class="currency-tag">VNĐ</span>
                </div>
                <div class="quick-action-chips">
@@ -292,34 +296,22 @@ while ($row = mysqli_fetch_assoc($select_products)) {
 </section>
 
 <script src="../js/admin_script.js"></script>
+<script src="../js/admin-product-price.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
    const nameInput = document.getElementById('bookNameInput');
    const catInput = document.getElementById('bookCategoryInput');
-   const priceInput = document.getElementById('bookPriceInput');
    const descInput = document.getElementById('bookDescInput');
    const imgInput = document.getElementById('bookImageInput');
-   const formattedPriceHint = document.getElementById('formattedPriceHint');
    const descCharCounter = document.getElementById('descCharCounter');
    const fileNameDisplay = document.getElementById('fileNameDisplay');
    const fileSizeDisplay = document.getElementById('fileSizeDisplay');
 
    const previewBookTitle = document.getElementById('previewBookTitle');
    const previewCatBadge = document.getElementById('previewCatBadge');
-   const previewBookPrice = document.getElementById('previewBookPrice');
    const previewBookDesc = document.getElementById('previewBookDesc');
    const previewCoverImg = document.getElementById('previewCoverImg');
    const previewPlaceholder = document.getElementById('previewPlaceholder');
-
-   function formatNumberDots(val) {
-      const digits = String(val || '').replace(/\D/g, '');
-      return digits.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-   }
-
-   function formatVND(val) {
-      const num = parseInt(String(val || '').replace(/\D/g, ''), 10) || 0;
-      return num.toLocaleString('vi-VN') + ' VNĐ';
-   }
 
    nameInput.addEventListener('input', function () {
       previewBookTitle.textContent = this.value.trim() || 'Tên đầu sách mới';
@@ -327,20 +319,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
    catInput.addEventListener('change', function () {
       previewCatBadge.textContent = this.value || 'Thể loại sách';
-   });
-
-   priceInput.addEventListener('input', function () {
-      this.value = formatNumberDots(this.value);
-      const formatted = formatVND(this.value);
-      formattedPriceHint.textContent = formatted;
-      previewBookPrice.textContent = formatted;
-   });
-
-   document.querySelectorAll('.price-chip').forEach(chip => {
-      chip.addEventListener('click', function () {
-         priceInput.value = this.getAttribute('data-price');
-         priceInput.dispatchEvent(new Event('input'));
-      });
    });
 
    descInput.addEventListener('input', function () {
