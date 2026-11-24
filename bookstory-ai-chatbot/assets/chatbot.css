@@ -204,7 +204,15 @@
 #bookbot-root .bb-empty { padding: 24px 12px; color: var(--bb-muted); font-size: 13px; line-height: 1.7; text-align: center; }
 
 @media (max-width: 520px) {
-  #bookbot-root .bb-launcher { right: 12px; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); min-height: 48px; padding: 10px 16px; font-size: 13px; }
+  #bookbot-root .bb-launcher {
+    right: 12px;
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    width: 48px;
+    min-height: 48px;
+    padding: 0;
+    justify-content: center;
+  }
+  #bookbot-root .bb-launcher span { display: none; }
   #bookbot-root .bb-panel { right: 12px; bottom: calc(74px + env(safe-area-inset-bottom, 0px)); width: calc(100vw - 24px); max-height: calc(100vh - 94px); max-height: calc(100dvh - 94px - env(safe-area-inset-bottom, 0px)); border-radius: 21px; }
   #bookbot-root .bb-input { font-size: 16px; } /* Ngăn iOS phóng to khi chọn ô nhập. */
 }

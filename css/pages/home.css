@@ -31,10 +31,6 @@
     border-radius: 10px;
 }
 
-.home .content {
-  text-align: center;
-}
-
 /* Liên hệ ở trang chủ - index */
 
 .home-contact {
@@ -130,10 +126,48 @@
    }
 }
 
-@media only screen and (max-width: 300px) {
-  .prev,
-  .next {
-    font-size: 11px;
+@media (max-width: 991px) {
+  .home {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 8px;
+    min-height: 0;
+    padding: 12px 14px 0;
+  }
+
+  .homeslide {
+    grid-column: 1 / -1;
+    min-height: 0;
+    min-width: 0;
+  }
+
+  .homeslide img {
+    height: auto;
+  }
+
+  .home .prev,
+  .home .next {
+    position: static;
+    width: 44px;
+    height: 36px;
+    margin: 0;
+    padding: 0;
+    border-radius: 18px;
+    color: #67428c;
+    background: #f4ecfa;
+    font-size: 16px;
+  }
+
+  .home .prev {
+    justify-self: end;
+  }
+
+  .home .next {
+    justify-self: start;
+  }
+
+  .home button:focus-visible {
+    outline: 2px solid #67428c;
   }
 }
 

@@ -30,7 +30,7 @@ $user_id = $_SESSION['user_id'] ?? null;
                 </span>
             </span>
         </a>
-        <nav class="navbar">
+        <nav class="navbar" id="store-navigation" aria-label="Điều hướng chính">
             <ul>
                 <li><a href="<?php echo getBaseUrl(); ?>index.php" id="home-nav">Trang chủ</a></li>
                 <li><a href="#">Trang </a>
@@ -52,30 +52,30 @@ $user_id = $_SESSION['user_id'] ?? null;
             </ul>
         </nav>
         <div class="icons">
-            <div id="menu-btn" class="fas fa-bars"></div>
-            <a href="<?php echo getBaseUrl(); ?>pages/search_page.php" class="fas fa-search"></a>
+            <button type="button" id="menu-btn" class="fas fa-bars" aria-label="Menu" aria-controls="store-navigation" aria-expanded="false"></button>
+            <a href="<?php echo getBaseUrl(); ?>pages/search_page.php" class="fas fa-search" aria-label="Tìm kiếm sách"></a>
             <?php if ($user_id): ?>
                 <?php
                     $select_wishlist_count = mysqli_query($conn, "SELECT * FROM `wishlist` WHERE user_id = '$user_id'") or die('query failed');
                     $wishlist_num_rows = mysqli_num_rows($select_wishlist_count);
                 ?>
-                <a href="<?php echo getBaseUrl(); ?>pages/wishlist.php"><i class="fas fa-heart"></i><span data-wishlist-count>(<?php echo $wishlist_num_rows; ?>)</span></a>
+                <a href="<?php echo getBaseUrl(); ?>pages/wishlist.php" aria-label="Sách yêu thích" aria-describedby="wishlist-count"><i class="fas fa-heart" aria-hidden="true"></i><span data-wishlist-count id="wishlist-count">(<?php echo $wishlist_num_rows; ?>)</span></a>
                 
                 <?php
                     $select_cart_count = mysqli_query($conn, "SELECT * FROM `cart` WHERE user_id = '$user_id'") or die('query failed');
                     $cart_num_rows = mysqli_num_rows($select_cart_count);
                 ?>
-                <a href="<?php echo getBaseUrl(); ?>pages/cart.php"><i class="fas fa-shopping-cart"></i><span data-cart-count>(<?php echo $cart_num_rows; ?>)</span></a>
+                <a href="<?php echo getBaseUrl(); ?>pages/cart.php" aria-label="Giỏ hàng" aria-describedby="cart-count"><i class="fas fa-shopping-cart" aria-hidden="true"></i><span data-cart-count id="cart-count">(<?php echo $cart_num_rows; ?>)</span></a>
                 
-                <div id="user-btn" class="fas fa-user"></div>
+                <button type="button" id="user-btn" class="fas fa-user" aria-label="Tài khoản" aria-controls="store-account" aria-expanded="false"></button>
             <?php else: ?>
                 <!-- Hiển thị biểu tượng đăng nhập nếu chưa đăng nhập -->
-                 <a href="<?php echo getBaseUrl(); ?>pages/login.php" class="fas fa-sign-in-alt"></a>
+                 <a href="<?php echo getBaseUrl(); ?>pages/login.php" class="fas fa-sign-in-alt" aria-label="Đăng nhập"></a>
             <?php endif; ?>
         </div>
 
         <?php if ($user_id): ?>
-            <div class="account-box">
+            <div class="account-box" id="store-account">
                 <p>User: <span><?php echo htmlspecialchars($_SESSION['user_name'], ENT_QUOTES, 'UTF-8'); ?></span></p>
                 <p>Email: <span><?php echo htmlspecialchars($_SESSION['user_email'], ENT_QUOTES, 'UTF-8'); ?></span></p>
                 <a href="<?php echo getBaseUrl(); ?>pages/logout.php" class="delete-btn">Đăng xuất</a>
