@@ -83,6 +83,7 @@ $money = static fn($value): string => number_format((float) $value, 0, ',', '.')
 <!doctype html>
 <html lang="vi">
 <head>
+    <link rel="icon" type="image/svg+xml" href="../images/favicon.svg">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Danh sách yêu thích | BookStory</title>

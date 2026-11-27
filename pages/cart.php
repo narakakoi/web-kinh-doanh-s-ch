@@ -58,6 +58,7 @@ $e = static fn($value): string => htmlspecialchars((string) $value, ENT_QUOTES, 
 $money = static fn($value): string => number_format((float) $value, 0, ',', '.') . ' đ';
 ?>
 <!doctype html><html lang="vi"><head>
+    <link rel="icon" type="image/svg+xml" href="../images/favicon.svg">
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Giỏ hàng | BookStory</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <link rel="stylesheet" href="../css/style.css">
